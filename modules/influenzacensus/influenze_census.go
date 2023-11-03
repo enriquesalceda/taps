@@ -1,6 +1,8 @@
 package influenzacensus
 
-import "errors"
+import (
+	"errors"
+)
 
 type FieldCensusParameters struct {
 	ID            string
@@ -46,6 +48,15 @@ func (t *InfluenzaCensusTaker) Take(
 		Number:        fieldCensusParameters.Number,
 	}
 
+	err := ValidatePresence(fieldCensus)
+	if err != nil {
+		return err
+	}
+
+	return t.store.Save(fieldCensus)
+}
+
+func ValidatePresence(fieldCensus *FieldCensus) error {
 	validationErrors := []error{}
 
 	if fieldCensus.ID == "" {
@@ -84,7 +95,7 @@ func (t *InfluenzaCensusTaker) Take(
 		return errors.Join(validationErrors...)
 	}
 
-	return t.store.Save(fieldCensus)
+	return nil
 }
 
 // -- store
