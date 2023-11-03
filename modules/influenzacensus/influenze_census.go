@@ -1,5 +1,7 @@
 package influenzacensus
 
+import "errors"
+
 type FieldCensusParameters struct {
 	ID            string
 	FirstLastName string
@@ -42,6 +44,38 @@ func (t *InfluenzaCensusTaker) Take(
 		State:         fieldCensusParameters.State,
 		Gender:        fieldCensusParameters.Gender,
 		Number:        fieldCensusParameters.Number,
+	}
+
+	if fieldCensus.ID == "" {
+		return errors.New("No ID")
+	}
+
+	if fieldCensus.FirstLastName == "" {
+		return errors.New("No FirstLastName")
+	}
+
+	if fieldCensus.LastLastName == "" {
+		return errors.New("No LastLastName")
+	}
+
+	if fieldCensus.FirstName == "" {
+		return errors.New("No FirstName")
+	}
+
+	if fieldCensus.DOB == "" {
+		return errors.New("No DOB")
+	}
+
+	if fieldCensus.Gender == "" {
+		return errors.New("No Gender")
+	}
+
+	if fieldCensus.State == "" {
+		return errors.New("No State")
+	}
+
+	if fieldCensus.Number == 0 {
+		return errors.New("No Number")
 	}
 
 	return t.store.Save(fieldCensus)
