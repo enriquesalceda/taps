@@ -8,7 +8,10 @@ import (
 
 func TestInfluenzaCesus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		fieldCensus := influenzacensus.NewFieldCensus(
+		influenzaMemoryStore := influenzacensus.NewInMemoryInfluenzaStore()
+
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+		require.NoError(t, influenzaCensus.Take(
 			"RAHE190116MMCMRSA7",
 			"RAMIREZ",
 			"HERRERA",
@@ -17,11 +20,7 @@ func TestInfluenzaCesus(t *testing.T) {
 			"MEXICO",
 			"MUJER",
 			15,
-		)
-		influenzaMemoryStore := influenzacensus.NewInMemoryInfluenzaStore()
-
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
-		require.NoError(t, influenzaCensus.Take(fieldCensus))
+		))
 
 		require.Equal(
 			t,

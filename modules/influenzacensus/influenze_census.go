@@ -41,7 +41,27 @@ func NewInfluenzaCensusTaker(store CensusStore) *InfluenzaCensusTaker {
 	return &InfluenzaCensusTaker{store: store}
 }
 
-func (t *InfluenzaCensusTaker) Take(fieldCensus *FieldCensus) error {
+func (t *InfluenzaCensusTaker) Take(
+	ID string,
+	firstLastName string,
+	lastLastName string,
+	firstName string,
+	DOB string,
+	state string,
+	gender string,
+	number int,
+) error {
+	fieldCensus := &FieldCensus{
+		ID:            ID,
+		FirstLastName: firstLastName,
+		LastLastName:  lastLastName,
+		FirstName:     firstName,
+		DOB:           DOB,
+		State:         state,
+		Gender:        gender,
+		Number:        number,
+	}
+
 	return t.store.Save(fieldCensus)
 }
 
