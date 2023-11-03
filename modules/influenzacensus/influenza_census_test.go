@@ -12,14 +12,16 @@ func TestInfluenzaCesus(t *testing.T) {
 
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		require.NoError(t, influenzaCensus.Take(
-			"RAHE190116MMCMRSA7",
-			"RAMIREZ",
-			"HERRERA",
-			"ESTHER ELIZABETH",
-			"16/01/2019",
-			"MEXICO",
-			"MUJER",
-			15,
+			&influenzacensus.FieldCensusParameters{
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "RAMIREZ",
+				FirstLastName: "HERRERA",
+				FirstName:     "ESTHER ELIZABETH",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			},
 		))
 
 		require.Equal(
@@ -27,8 +29,8 @@ func TestInfluenzaCesus(t *testing.T) {
 			[]influenzacensus.InfluenzaCensus{
 				{
 					ID:            "RAHE190116MMCMRSA7",
-					LastLastName:  "HERRERA",
-					FirstLastName: "RAMIREZ",
+					LastLastName:  "RAMIREZ",
+					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",

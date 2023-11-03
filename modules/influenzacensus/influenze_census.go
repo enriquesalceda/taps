@@ -1,5 +1,16 @@
 package influenzacensus
 
+type FieldCensusParameters struct {
+	ID            string
+	FirstLastName string
+	LastLastName  string
+	FirstName     string
+	DOB           string
+	State         string
+	Gender        string
+	Number        int
+}
+
 type FieldCensus struct {
 	ID            string
 	FirstLastName string
@@ -11,28 +22,6 @@ type FieldCensus struct {
 	Number        int
 }
 
-func NewFieldCensus(
-	ID string,
-	firstLastName string,
-	lastLastName string,
-	firstName string,
-	DOB string,
-	state string,
-	gender string,
-	number int,
-) *FieldCensus {
-	return &FieldCensus{
-		ID:            ID,
-		FirstLastName: firstLastName,
-		LastLastName:  lastLastName,
-		FirstName:     firstName,
-		DOB:           DOB,
-		State:         state,
-		Gender:        gender,
-		Number:        number,
-	}
-}
-
 type InfluenzaCensusTaker struct {
 	store CensusStore
 }
@@ -42,24 +31,17 @@ func NewInfluenzaCensusTaker(store CensusStore) *InfluenzaCensusTaker {
 }
 
 func (t *InfluenzaCensusTaker) Take(
-	ID string,
-	firstLastName string,
-	lastLastName string,
-	firstName string,
-	DOB string,
-	state string,
-	gender string,
-	number int,
+	fieldCensusParameters *FieldCensusParameters,
 ) error {
 	fieldCensus := &FieldCensus{
-		ID:            ID,
-		FirstLastName: firstLastName,
-		LastLastName:  lastLastName,
-		FirstName:     firstName,
-		DOB:           DOB,
-		State:         state,
-		Gender:        gender,
-		Number:        number,
+		ID:            fieldCensusParameters.ID,
+		FirstLastName: fieldCensusParameters.FirstLastName,
+		LastLastName:  fieldCensusParameters.LastLastName,
+		FirstName:     fieldCensusParameters.FirstName,
+		DOB:           fieldCensusParameters.DOB,
+		State:         fieldCensusParameters.State,
+		Gender:        fieldCensusParameters.Gender,
+		Number:        fieldCensusParameters.Number,
 	}
 
 	return t.store.Save(fieldCensus)
