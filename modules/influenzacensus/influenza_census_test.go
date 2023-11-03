@@ -54,7 +54,6 @@ func TestInfluenzaCesus(t *testing.T) {
 			{
 				name: "No ID",
 				parameters: &influenzacensus.FieldCensusParameters{
-					ID:            "",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -68,7 +67,6 @@ func TestInfluenzaCesus(t *testing.T) {
 				name: "No LastLastName",
 				parameters: &influenzacensus.FieldCensusParameters{
 					ID:            "RAHE190116MMCMRSA7",
-					LastLastName:  "",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
@@ -80,14 +78,13 @@ func TestInfluenzaCesus(t *testing.T) {
 			{
 				name: "No FirstLastName",
 				parameters: &influenzacensus.FieldCensusParameters{
-					ID:            "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
+					ID:           "RAHE190116MMCMRSA7",
+					LastLastName: "RAMIREZ",
+					FirstName:    "ESTHER ELIZABETH",
+					Gender:       "MUJER",
+					DOB:          "16/01/2019",
+					State:        "MEXICO",
+					Number:       15,
 				},
 			},
 			{
@@ -96,7 +93,6 @@ func TestInfluenzaCesus(t *testing.T) {
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
-					FirstName:     "",
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
@@ -110,7 +106,6 @@ func TestInfluenzaCesus(t *testing.T) {
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "",
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
@@ -124,7 +119,6 @@ func TestInfluenzaCesus(t *testing.T) {
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
-					DOB:           "",
 					State:         "MEXICO",
 					Number:        15,
 				},
@@ -138,7 +132,6 @@ func TestInfluenzaCesus(t *testing.T) {
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
-					State:         "",
 					Number:        15,
 				},
 			},
@@ -152,7 +145,17 @@ func TestInfluenzaCesus(t *testing.T) {
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
-					Number:        0,
+				},
+			},
+			{
+				name: "No ID\nNo State",
+				parameters: &influenzacensus.FieldCensusParameters{
+					LastLastName:  "RAMIREZ",
+					FirstLastName: "HERRERA",
+					FirstName:     "ESTHER ELIZABETH",
+					Gender:        "MUJER",
+					DOB:           "16/01/2019",
+					Number:        15,
 				},
 			},
 		}

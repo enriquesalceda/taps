@@ -46,36 +46,42 @@ func (t *InfluenzaCensusTaker) Take(
 		Number:        fieldCensusParameters.Number,
 	}
 
+	validationErrors := []error{}
+
 	if fieldCensus.ID == "" {
-		return errors.New("No ID")
+		validationErrors = append(validationErrors, errors.New("No ID"))
 	}
 
 	if fieldCensus.FirstLastName == "" {
-		return errors.New("No FirstLastName")
+		validationErrors = append(validationErrors, errors.New("No FirstLastName"))
 	}
 
 	if fieldCensus.LastLastName == "" {
-		return errors.New("No LastLastName")
+		validationErrors = append(validationErrors, errors.New("No LastLastName"))
 	}
 
 	if fieldCensus.FirstName == "" {
-		return errors.New("No FirstName")
+		validationErrors = append(validationErrors, errors.New("No FirstName"))
 	}
 
 	if fieldCensus.DOB == "" {
-		return errors.New("No DOB")
+		validationErrors = append(validationErrors, errors.New("No DOB"))
 	}
 
 	if fieldCensus.Gender == "" {
-		return errors.New("No Gender")
+		validationErrors = append(validationErrors, errors.New("No Gender"))
 	}
 
 	if fieldCensus.State == "" {
-		return errors.New("No State")
+		validationErrors = append(validationErrors, errors.New("No State"))
 	}
 
 	if fieldCensus.Number == 0 {
-		return errors.New("No Number")
+		validationErrors = append(validationErrors, errors.New("No Number"))
+	}
+
+	if len(validationErrors) > 0 {
+		return errors.Join(validationErrors...)
 	}
 
 	return t.store.Save(fieldCensus)
