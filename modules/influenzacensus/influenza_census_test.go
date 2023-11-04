@@ -6,12 +6,13 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/require"
 	"taps/modules/influenzacensus"
+	"taps/modules/store"
 	"testing"
 )
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := influenzacensus.NewInMemoryInfluenzaStore()
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore()
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
 		response := influenzaCensus.Take(
@@ -31,7 +32,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			[]influenzacensus.InfluenzaCensus{
+			[]store.InfluenzaCensus{
 				{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
@@ -47,7 +48,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
-		influenzaMemoryStore := influenzacensus.NewInMemoryInfluenzaStore()
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore()
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		type testScenario struct {
 			name       string
