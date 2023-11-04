@@ -47,6 +47,68 @@ func TestInfluenzaCensus(t *testing.T) {
 			influenzaMemoryStore.All())
 	})
 
+	t.Run("save multiple census", func(t *testing.T) {
+		influenzaMemoryStore := store2.NewInMemoryInfluenzaStore(map[string]store2.InfluenzaCensus{})
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+
+		response := influenzaCensus.Take(
+			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "RAMIREZ",
+				FirstLastName: "HERRERA",
+				FirstName:     "ESTHER ELIZABETH",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			})},
+		)
+
+		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, response.Body, "success")
+
+		response = influenzaCensus.Take(
+			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
+				ID:            "AABBCC112233",
+				LastLastName:  "PEREZ",
+				FirstLastName: "PEREZ",
+				FirstName:     "PEPE",
+				Gender:        "HOMBRE",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        7,
+			})},
+		)
+
+		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, response.Body, "success")
+		require.Equal(
+			t,
+			[]store2.InfluenzaCensus{
+				{
+					ID:            "RAHE190116MMCMRSA7",
+					LastLastName:  "RAMIREZ",
+					FirstLastName: "HERRERA",
+					FirstName:     "ESTHER ELIZABETH",
+					Gender:        "MUJER",
+					DOB:           "16/01/2019",
+					State:         "MEXICO",
+					Number:        15,
+				},
+				{
+					ID:            "AABBCC112233",
+					LastLastName:  "PEREZ",
+					FirstLastName: "PEREZ",
+					FirstName:     "PEPE",
+					Gender:        "HOMBRE",
+					DOB:           "16/01/2019",
+					State:         "MEXICO",
+					Number:        7,
+				},
+			},
+			influenzaMemoryStore.All())
+	})
+
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
 		influenzaMemoryStore := store2.NewInMemoryInfluenzaStore(map[string]store2.InfluenzaCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
