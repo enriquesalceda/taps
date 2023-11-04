@@ -31,7 +31,9 @@ func MustParseCURP(rawCURP string) Curp {
 func ParseCURP(rawCURP string) (Curp, error) {
 	curpData := strings.Split(rawCURP, "|")
 	if len(curpData) != expectedCURPItemsLength {
-		return Curp{}, errors.New(fmt.Sprintf("curp should have 10 items, it has %d", len(curpData)))
+		return Curp{}, errors.New(
+			fmt.Sprintf("curp should have %d items, it has %d", expectedCURPItemsLength, len(curpData)),
+		)
 	}
 
 	number, err := strconv.Atoi(curpData[8])
