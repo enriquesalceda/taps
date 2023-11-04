@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const expectedCURPItemsLength = 10
+
 type Curp struct {
 	ID            string
 	LastLastName  string
@@ -28,7 +30,7 @@ func MustParseCURP(rawCURP string) Curp {
 
 func ParseCURP(rawCURP string) (Curp, error) {
 	curpData := strings.Split(rawCURP, "|")
-	if len(curpData) != 10 {
+	if len(curpData) != expectedCURPItemsLength {
 		return Curp{}, errors.New(fmt.Sprintf("curp should have 10 items, it has %d", len(curpData)))
 	}
 
