@@ -63,10 +63,16 @@ func TestCurp(t *testing.T) {
 		)
 	})
 
-	t.Run("Must parse panics if invalid string", func(t *testing.T) {
+	t.Run("Must parse panics", func(t *testing.T) {
 		require.PanicsWithError(t,
 			errors.New("curp should have 10 items, it has 4").Error(),
 			func() { vo.MustParseCURP("RAHE190116MMCMRSA7||RAMIREZ|HERRERA") },
+		)
+		require.PanicsWithError(t,
+			errors.New("strconv.Atoi: parsing \"?\": invalid syntax").Error(),
+			func() {
+				vo.MustParseCURP("RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|?|")
+			},
 		)
 	})
 }
