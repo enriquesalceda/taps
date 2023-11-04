@@ -6,13 +6,13 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/require"
 	"taps/modules/influenzacensus"
-	"taps/modules/store"
+	store2 "taps/modules/influenzacensus/store"
 	"testing"
 )
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
+		influenzaMemoryStore := store2.NewInMemoryInfluenzaStore(map[string]store2.InfluenzaCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
 		response := influenzaCensus.Take(
@@ -32,7 +32,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			[]store.InfluenzaCensus{
+			[]store2.InfluenzaCensus{
 				{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
@@ -48,7 +48,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
+		influenzaMemoryStore := store2.NewInMemoryInfluenzaStore(map[string]store2.InfluenzaCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		type testScenario struct {
 			name       string
@@ -175,7 +175,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("raises a 409 conflict when the CURP code already exists", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{
+		influenzaMemoryStore := store2.NewInMemoryInfluenzaStore(map[string]store2.InfluenzaCensus{
 			"RAHE190116MMCMRSA7": {
 				ID:            "RAHE190116MMCMRSA7",
 				LastLastName:  "RAMIREZ",
@@ -206,7 +206,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "conflict")
 		require.Equal(
 			t,
-			[]store.InfluenzaCensus{
+			[]store2.InfluenzaCensus{
 				{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",

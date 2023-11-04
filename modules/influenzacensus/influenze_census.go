@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"taps/domain"
-	"taps/modules/store"
+	"taps/modules/influenzacensus/store"
 )
 
 type Taker struct {
