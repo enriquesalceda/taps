@@ -1,19 +1,21 @@
 package influenzacensus_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/require"
 	"taps/modules/influenzacensus"
 	"testing"
 )
 
-func TestInfluenzaCesus(t *testing.T) {
+func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
 		influenzaMemoryStore := influenzacensus.NewInMemoryInfluenzaStore()
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
-		require.NoError(t, influenzaCensus.Take(
-			&influenzacensus.FieldCensusParameters{
+		response := influenzaCensus.Take(
+			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
 				ID:            "RAHE190116MMCMRSA7",
 				LastLastName:  "RAMIREZ",
 				FirstLastName: "HERRERA",
@@ -22,9 +24,11 @@ func TestInfluenzaCesus(t *testing.T) {
 				DOB:           "16/01/2019",
 				State:         "MEXICO",
 				Number:        15,
-			},
-		))
+			})},
+		)
 
+		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
 			[]influenzacensus.InfluenzaCensus{
@@ -47,13 +51,13 @@ func TestInfluenzaCesus(t *testing.T) {
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		type testScenario struct {
 			name       string
-			parameters *influenzacensus.FieldCensusParameters
+			parameters string
 		}
 
 		testScenarios := []testScenario{
 			{
 				name: "No ID",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -61,11 +65,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No LastLastName",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -73,11 +77,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No FirstLastName",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:           "RAHE190116MMCMRSA7",
 					LastLastName: "RAMIREZ",
 					FirstName:    "ESTHER ELIZABETH",
@@ -85,11 +89,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					DOB:          "16/01/2019",
 					State:        "MEXICO",
 					Number:       15,
-				},
+				}),
 			},
 			{
 				name: "No FirstName",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -97,11 +101,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No Gender",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -109,11 +113,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No DOB",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -121,11 +125,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					Gender:        "MUJER",
 					State:         "MEXICO",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No State",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -133,11 +137,11 @@ func TestInfluenzaCesus(t *testing.T) {
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
 					Number:        15,
-				},
+				}),
 			},
 			{
 				name: "No Number",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -145,25 +149,44 @@ func TestInfluenzaCesus(t *testing.T) {
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
-				},
+				}),
 			},
 			{
 				name: "No ID\nNo State",
-				parameters: &influenzacensus.FieldCensusParameters{
+				parameters: PreparePayload(t, CensusPayload{
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
 					DOB:           "16/01/2019",
 					Number:        15,
-				},
+				}),
 			},
 		}
 
 		for _, ts := range testScenarios {
 			t.Run(fmt.Sprintf("Test %s", ts.name), func(t *testing.T) {
-				require.EqualError(t, influenzaCensus.Take(ts.parameters), ts.name)
+				response := influenzaCensus.Take(events.APIGatewayProxyRequest{Body: ts.parameters})
+				require.Equal(t, 400, response.StatusCode)
+				require.Equal(t, ts.name, response.Body)
 			})
 		}
 	})
+}
+
+type CensusPayload struct {
+	ID            string
+	LastLastName  string
+	FirstLastName string
+	FirstName     string
+	Gender        string
+	DOB           string
+	State         string
+	Number        int
+}
+
+func PreparePayload(t *testing.T, censusPayload CensusPayload) string {
+	body, err := json.Marshal(censusPayload)
+	require.NoError(t, err)
+	return string(body)
 }

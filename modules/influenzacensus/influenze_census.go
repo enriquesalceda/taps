@@ -1,101 +1,38 @@
 package influenzacensus
 
 import (
-	"errors"
+	"encoding/json"
+	"github.com/aws/aws-lambda-go/events"
+	"taps/domain"
 )
-
-type FieldCensusParameters struct {
-	ID            string
-	FirstLastName string
-	LastLastName  string
-	FirstName     string
-	DOB           string
-	State         string
-	Gender        string
-	Number        int
-}
-
-type FieldCensus struct {
-	ID            string
-	FirstLastName string
-	LastLastName  string
-	FirstName     string
-	DOB           string
-	State         string
-	Gender        string
-	Number        int
-}
 
 type InfluenzaCensusTaker struct {
 	store CensusStore
+}
+
+type invalidCensusResponse struct {
+	errors string
 }
 
 func NewInfluenzaCensusTaker(store CensusStore) *InfluenzaCensusTaker {
 	return &InfluenzaCensusTaker{store: store}
 }
 
-func (t *InfluenzaCensusTaker) Take(
-	fieldCensusParameters *FieldCensusParameters,
-) error {
-	fieldCensus := &FieldCensus{
-		ID:            fieldCensusParameters.ID,
-		FirstLastName: fieldCensusParameters.FirstLastName,
-		LastLastName:  fieldCensusParameters.LastLastName,
-		FirstName:     fieldCensusParameters.FirstName,
-		DOB:           fieldCensusParameters.DOB,
-		State:         fieldCensusParameters.State,
-		Gender:        fieldCensusParameters.Gender,
-		Number:        fieldCensusParameters.Number,
-	}
+func (t *InfluenzaCensusTaker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+	fieldCensus := domain.FieldCensus{}
+	json.Unmarshal([]byte(fieldCensusParameters.Body), &fieldCensus)
 
-	err := ValidatePresence(fieldCensus)
+	err := fieldCensus.Validate()
 	if err != nil {
-		return err
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
 	}
 
-	return t.store.Save(fieldCensus)
-}
-
-func ValidatePresence(fieldCensus *FieldCensus) error {
-	validationErrors := []error{}
-
-	if fieldCensus.ID == "" {
-		validationErrors = append(validationErrors, errors.New("No ID"))
+	err = t.store.Save(fieldCensus)
+	if err != nil {
+		panic(err)
 	}
 
-	if fieldCensus.FirstLastName == "" {
-		validationErrors = append(validationErrors, errors.New("No FirstLastName"))
-	}
-
-	if fieldCensus.LastLastName == "" {
-		validationErrors = append(validationErrors, errors.New("No LastLastName"))
-	}
-
-	if fieldCensus.FirstName == "" {
-		validationErrors = append(validationErrors, errors.New("No FirstName"))
-	}
-
-	if fieldCensus.DOB == "" {
-		validationErrors = append(validationErrors, errors.New("No DOB"))
-	}
-
-	if fieldCensus.Gender == "" {
-		validationErrors = append(validationErrors, errors.New("No Gender"))
-	}
-
-	if fieldCensus.State == "" {
-		validationErrors = append(validationErrors, errors.New("No State"))
-	}
-
-	if fieldCensus.Number == 0 {
-		validationErrors = append(validationErrors, errors.New("No Number"))
-	}
-
-	if len(validationErrors) > 0 {
-		return errors.Join(validationErrors...)
-	}
-
-	return nil
+	return events.APIGatewayProxyResponse{Body: "success", StatusCode: 200}
 }
 
 // -- store
@@ -116,7 +53,7 @@ type InfluenzaCensus struct {
 
 type CensusStore interface {
 	All() []InfluenzaCensus
-	Save(fieldCensus *FieldCensus) error
+	Save(fieldCensus domain.FieldCensus) error
 }
 
 func NewInMemoryInfluenzaStore() *InMemoryInfluenzaStore {
@@ -133,7 +70,7 @@ func (i *InMemoryInfluenzaStore) All() []InfluenzaCensus {
 	return allCensus
 }
 
-func (i *InMemoryInfluenzaStore) Save(fieldCensus *FieldCensus) error {
+func (i *InMemoryInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
 	influenzaCensus := InfluenzaCensus{
 		ID:            fieldCensus.ID,
 		FirstLastName: fieldCensus.FirstLastName,
