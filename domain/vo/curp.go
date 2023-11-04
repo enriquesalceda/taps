@@ -1,6 +1,8 @@
 package vo
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -16,10 +18,16 @@ type Curp struct {
 	Number        int
 }
 
-func ParseCURP(rawCURP string) Curp {
+func ParseCURP(rawCURP string) (Curp, error) {
 	curpData := strings.Split(rawCURP, "|")
+	if len(curpData) != 10 {
+		return Curp{}, errors.New(fmt.Sprintf("curp should have 10 items, it has %d", len(curpData)))
+	}
 
-	number, _ := strconv.Atoi(curpData[8])
+	number, err := strconv.Atoi(curpData[8])
+	if err != nil {
+		return Curp{}, err
+	}
 
 	return Curp{
 		ID:            curpData[0],
@@ -30,5 +38,5 @@ func ParseCURP(rawCURP string) Curp {
 		DOB:           curpData[6],
 		State:         curpData[7],
 		Number:        number,
-	}
+	}, nil
 }
