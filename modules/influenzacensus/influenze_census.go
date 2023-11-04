@@ -30,7 +30,7 @@ func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events
 
 	err = t.store.Save(fieldCensus)
 	if err != nil {
-		panic(err)
+		return events.APIGatewayProxyResponse{Body: "internal server error", StatusCode: 500}
 	}
 
 	return events.APIGatewayProxyResponse{Body: "success", StatusCode: 200}

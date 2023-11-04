@@ -282,6 +282,27 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 			influenzaMemoryStore.All())
 	})
+
+	t.Run("raises a 500 when the store returns an error", func(t *testing.T) {
+		brokenInfluenzaMemoryStore := store2.NewBrokenInfluenzaStore()
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(brokenInfluenzaMemoryStore)
+
+		response := influenzaCensus.Take(
+			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "RAMIREZ",
+				FirstLastName: "HERRERA",
+				FirstName:     "ESTHER ELIZABETH",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			})},
+		)
+
+		require.Equal(t, response.StatusCode, 500)
+		require.Equal(t, response.Body, "internal server error")
+	})
 }
 
 type CensusPayload struct {
