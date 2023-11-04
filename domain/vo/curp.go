@@ -18,6 +18,14 @@ type Curp struct {
 	Number        int
 }
 
+func MustParseCURP(rawCURP string) Curp {
+	curp, err := ParseCURP(rawCURP)
+	if err != nil {
+		panic(err)
+	}
+	return curp
+}
+
 func ParseCURP(rawCURP string) (Curp, error) {
 	curpData := strings.Split(rawCURP, "|")
 	if len(curpData) != 10 {
