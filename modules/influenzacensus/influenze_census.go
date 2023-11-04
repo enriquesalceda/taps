@@ -7,15 +7,15 @@ import (
 	"taps/modules/store"
 )
 
-type InfluenzaCensusTaker struct {
+type Taker struct {
 	store store.CensusStore
 }
 
-func NewInfluenzaCensusTaker(store store.CensusStore) *InfluenzaCensusTaker {
-	return &InfluenzaCensusTaker{store: store}
+func NewInfluenzaCensusTaker(store store.CensusStore) *Taker {
+	return &Taker{store: store}
 }
 
-func (t *InfluenzaCensusTaker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 	fieldCensus := domain.FieldCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &fieldCensus)
 
@@ -31,5 +31,3 @@ func (t *InfluenzaCensusTaker) Take(fieldCensusParameters events.APIGatewayProxy
 
 	return events.APIGatewayProxyResponse{Body: "success", StatusCode: 200}
 }
-
-// -- store
