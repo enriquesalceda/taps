@@ -1,6 +1,7 @@
 package vo_test
 
 import (
+	"errors"
 	"github.com/stretchr/testify/require"
 	"taps/domain/vo"
 	"testing"
@@ -47,10 +48,6 @@ func TestCurp(t *testing.T) {
 	})
 
 	t.Run("Must parse a valid CURP string", func(t *testing.T) {
-		rawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"
-
-		curp := vo.MustParseCURP(rawCURPData)
-
 		require.Equal(t,
 			vo.Curp{
 				ID:            "RAHE190116MMCMRSA7",
@@ -62,7 +59,14 @@ func TestCurp(t *testing.T) {
 				State:         "MEXICO",
 				Number:        15,
 			},
-			curp,
+			vo.MustParseCURP("RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
+		)
+	})
+
+	t.Run("Must parse panics if invalid string", func(t *testing.T) {
+		require.PanicsWithError(t,
+			errors.New("curp should have 10 items, it has 4").Error(),
+			func() { vo.MustParseCURP("RAHE190116MMCMRSA7||RAMIREZ|HERRERA") },
 		)
 	})
 }
