@@ -6,9 +6,14 @@ type InMemoryInfluenzaStore struct {
 	all map[string]InfluenzaCensus
 }
 
-func NewInMemoryInfluenzaStore() *InMemoryInfluenzaStore {
+func (i *InMemoryInfluenzaStore) Find(id string) bool {
+	_, found := i.all[id]
+	return found
+}
+
+func NewInMemoryInfluenzaStore(census map[string]InfluenzaCensus) *InMemoryInfluenzaStore {
 	return &InMemoryInfluenzaStore{
-		all: map[string]InfluenzaCensus{},
+		all: census,
 	}
 }
 

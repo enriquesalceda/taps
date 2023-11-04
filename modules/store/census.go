@@ -16,4 +16,5 @@ type InfluenzaCensus struct {
 type CensusStore interface {
 	All() []InfluenzaCensus
 	Save(fieldCensus domain.FieldCensus) error
+	Find(id string) bool
 }

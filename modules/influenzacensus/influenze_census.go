@@ -19,6 +19,11 @@ func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events
 	fieldCensus := domain.FieldCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &fieldCensus)
 
+	found := t.store.Find(fieldCensus.ID)
+	if found {
+		return events.APIGatewayProxyResponse{Body: "conflict", StatusCode: 409}
+	}
+
 	err := fieldCensus.Validate()
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}

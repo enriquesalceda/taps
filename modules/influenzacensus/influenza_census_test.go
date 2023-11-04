@@ -12,7 +12,7 @@ import (
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore()
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
 		response := influenzaCensus.Take(
@@ -48,7 +48,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore()
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		type testScenario struct {
 			name       string
@@ -172,6 +172,53 @@ func TestInfluenzaCensus(t *testing.T) {
 				require.Equal(t, ts.name, response.Body)
 			})
 		}
+	})
+
+	t.Run("raises a 409 conflict when the CURP code already exists", func(t *testing.T) {
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{
+			"RAHE190116MMCMRSA7": {
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "RAMIREZ",
+				FirstLastName: "HERRERA",
+				FirstName:     "ESTHER ELIZABETH",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			},
+		})
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+
+		response := influenzaCensus.Take(
+			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "Duplication",
+				FirstLastName: "Duplication",
+				FirstName:     "Duplication",
+				Gender:        "Duplication",
+				DOB:           "Duplication",
+				State:         "Duplication",
+				Number:        15,
+			})},
+		)
+
+		require.Equal(t, response.StatusCode, 409)
+		require.Equal(t, response.Body, "conflict")
+		require.Equal(
+			t,
+			[]store.InfluenzaCensus{
+				{
+					ID:            "RAHE190116MMCMRSA7",
+					LastLastName:  "RAMIREZ",
+					FirstLastName: "HERRERA",
+					FirstName:     "ESTHER ELIZABETH",
+					Gender:        "MUJER",
+					DOB:           "16/01/2019",
+					State:         "MEXICO",
+					Number:        15,
+				},
+			},
+			influenzaMemoryStore.All())
 	})
 }
 
