@@ -27,7 +27,7 @@ func (i *InMemoryInfluenzaStore) All() []InfluenzaCensus {
 
 func (i *InMemoryInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
 	influenzaCensus := InfluenzaCensus{
-		ID:            fieldCensus.ID,
+		ID:            fieldCensus.CurpID,
 		FirstLastName: fieldCensus.FirstLastName,
 		LastLastName:  fieldCensus.LastLastName,
 		FirstName:     fieldCensus.FirstName,
@@ -37,6 +37,6 @@ func (i *InMemoryInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
 		Number:        fieldCensus.Number,
 	}
 
-	i.all[fieldCensus.ID] = influenzaCensus
+	i.all[fieldCensus.CurpID] = influenzaCensus
 	return nil
 }

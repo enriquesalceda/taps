@@ -19,7 +19,7 @@ func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events
 	fieldCensus := domain.FieldCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &fieldCensus)
 
-	if t.store.Find(fieldCensus.ID) {
+	if t.store.Find(fieldCensus.CurpID) {
 		return events.APIGatewayProxyResponse{Body: "conflict", StatusCode: 409}
 	}
 

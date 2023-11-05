@@ -3,7 +3,7 @@ package domain
 import "errors"
 
 type FieldCensus struct {
-	ID            string
+	CurpID        string
 	FirstLastName string
 	LastLastName  string
 	FirstName     string
@@ -16,7 +16,7 @@ type FieldCensus struct {
 func (c FieldCensus) Validate() error {
 	validationErrors := []error{}
 
-	if c.ID == "" {
+	if c.CurpID == "" {
 		validationErrors = append(validationErrors, errors.New("No ID"))
 	}
 

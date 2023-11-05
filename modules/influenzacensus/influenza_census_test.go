@@ -17,7 +17,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		response := influenzaCensus.Take(
 			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				ID:            "RAHE190116MMCMRSA7",
+				CurpID:        "RAHE190116MMCMRSA7",
 				LastLastName:  "RAMIREZ",
 				FirstLastName: "HERRERA",
 				FirstName:     "ESTHER ELIZABETH",
@@ -53,7 +53,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		response := influenzaCensus.Take(
 			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				ID:            "RAHE190116MMCMRSA7",
+				CurpID:        "RAHE190116MMCMRSA7",
 				LastLastName:  "RAMIREZ",
 				FirstLastName: "HERRERA",
 				FirstName:     "ESTHER ELIZABETH",
@@ -69,7 +69,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		response = influenzaCensus.Take(
 			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				ID:            "AABBCC112233",
+				CurpID:        "AABBCC112233",
 				LastLastName:  "PEREZ",
 				FirstLastName: "PEREZ",
 				FirstName:     "PEPE",
@@ -133,7 +133,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No LastLastName",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
 					Gender:        "MUJER",
@@ -145,7 +145,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No FirstLastName",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:           "RAHE190116MMCMRSA7",
+					CurpID:       "RAHE190116MMCMRSA7",
 					LastLastName: "RAMIREZ",
 					FirstName:    "ESTHER ELIZABETH",
 					Gender:       "MUJER",
@@ -157,7 +157,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No FirstName",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					Gender:        "MUJER",
@@ -169,7 +169,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No Gender",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -181,7 +181,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No DOB",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -193,7 +193,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No State",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -205,7 +205,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			{
 				name: "No Number",
 				parameters: PreparePayload(t, CensusPayload{
-					ID:            "RAHE190116MMCMRSA7",
+					CurpID:        "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
 					FirstName:     "ESTHER ELIZABETH",
@@ -253,7 +253,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		response := influenzaCensus.Take(
 			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				ID:            "RAHE190116MMCMRSA7",
+				CurpID:        "RAHE190116MMCMRSA7",
 				LastLastName:  "Duplication",
 				FirstLastName: "Duplication",
 				FirstName:     "Duplication",
@@ -289,7 +289,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		response := influenzaCensus.Take(
 			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				ID:            "RAHE190116MMCMRSA7",
+				CurpID:        "RAHE190116MMCMRSA7",
 				LastLastName:  "RAMIREZ",
 				FirstLastName: "HERRERA",
 				FirstName:     "ESTHER ELIZABETH",
@@ -306,7 +306,7 @@ func TestInfluenzaCensus(t *testing.T) {
 }
 
 type CensusPayload struct {
-	ID            string
+	CurpID        string
 	LastLastName  string
 	FirstLastName string
 	FirstName     string
