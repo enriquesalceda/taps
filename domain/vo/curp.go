@@ -9,6 +9,17 @@ import (
 
 const expectedCURPItemsLength = 10
 
+var expectedPositionOfPresentItems = map[int]string{
+	0: "ID",
+	2: "LastLastName",
+	3: "FirstLastName",
+	4: "FirstName",
+	5: "Gender",
+	6: "DOB",
+	7: "State",
+	8: "Number",
+}
+
 type Curp struct {
 	ID            string
 	LastLastName  string
@@ -33,6 +44,19 @@ func ParseCURP(rawCURP string) (Curp, error) {
 	if len(curpData) != expectedCURPItemsLength {
 		return Curp{}, errors.New(
 			fmt.Sprintf("curp should have %d items, it has %d", expectedCURPItemsLength, len(curpData)),
+		)
+	}
+
+	var notPresentStrings []string
+	for i, v := range curpData {
+		_, found := expectedPositionOfPresentItems[i]
+		if v == "" && found {
+			notPresentStrings = append(notPresentStrings, expectedPositionOfPresentItems[i])
+		}
+	}
+	if len(notPresentStrings) > 0 {
+		return Curp{}, errors.New(
+			fmt.Sprintf("curp is not including: %s", strings.Join(notPresentStrings, ", ")),
 		)
 	}
 

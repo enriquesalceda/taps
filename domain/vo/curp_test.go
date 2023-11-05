@@ -29,6 +29,15 @@ func TestCurp(t *testing.T) {
 		)
 	})
 
+	t.Run("Parse errors when expected position of present item are not present", func(t *testing.T) {
+		incompleteRawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|||16/01/2019|MEXICO|15|"
+
+		curp, err := vo.ParseCURP(incompleteRawCURPData)
+
+		require.Equal(t, vo.Curp{}, curp)
+		require.EqualError(t, err, "curp is not including: FirstName, Gender")
+	})
+
 	t.Run("Parse errors when the 10 expected items are not present", func(t *testing.T) {
 		rawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA"
 
