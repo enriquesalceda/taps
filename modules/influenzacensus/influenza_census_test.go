@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/require"
+	"taps/domain"
+	"taps/domain/vo"
 	"taps/modules/influenzacensus"
 	"taps/modules/influenzacensus/store"
 	"testing"
@@ -12,224 +14,141 @@ import (
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
 		response := influenzaCensus.Take(
-			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				CurpID:        "RAHE190116MMCMRSA7",
-				LastLastName:  "RAMIREZ",
-				FirstLastName: "HERRERA",
-				FirstName:     "ESTHER ELIZABETH",
-				Gender:        "MUJER",
-				DOB:           "16/01/2019",
-				State:         "MEXICO",
-				Number:        15,
-			})},
+			events.APIGatewayProxyRequest{
+				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
+			},
 		)
 
 		require.Equal(t, response.StatusCode, 200)
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			[]store.InfluenzaCensus{
-				{
-					ID:            "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
+			map[string]domain.FieldCensus{
+				"RAHE190116MMCMRSA7": {
+					ID: "RAHE190116MMCMRSA7",
+					CURP: vo.Curp{
+						ID:            "RAHE190116MMCMRSA7",
+						LastLastName:  "RAMIREZ",
+						FirstLastName: "HERRERA",
+						FirstName:     "ESTHER ELIZABETH",
+						Gender:        "MUJER",
+						DOB:           "16/01/2019",
+						State:         "MEXICO",
+						Number:        15,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
 	})
 
 	t.Run("save multiple census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
 		response := influenzaCensus.Take(
-			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				CurpID:        "RAHE190116MMCMRSA7",
-				LastLastName:  "RAMIREZ",
-				FirstLastName: "HERRERA",
-				FirstName:     "ESTHER ELIZABETH",
-				Gender:        "MUJER",
-				DOB:           "16/01/2019",
-				State:         "MEXICO",
-				Number:        15,
-			})},
+			events.APIGatewayProxyRequest{
+				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
+			},
 		)
 
 		require.Equal(t, response.StatusCode, 200)
 		require.Equal(t, response.Body, "success")
 
 		response = influenzaCensus.Take(
-			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				CurpID:        "AABBCC112233",
-				LastLastName:  "PEREZ",
-				FirstLastName: "PEREZ",
-				FirstName:     "PEPE",
-				Gender:        "HOMBRE",
-				DOB:           "16/01/2019",
-				State:         "MEXICO",
-				Number:        7,
-			})},
+			events.APIGatewayProxyRequest{
+				Body: Body(t, "AABBCC112233||PEREZ|PEREZ|PEPE|HOMBRE|16/01/2019|MEXICO|7|"),
+			},
 		)
 
 		require.Equal(t, response.StatusCode, 200)
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			[]store.InfluenzaCensus{
-				{
-					ID:            "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
+			map[string]domain.FieldCensus{
+				"AABBCC112233": {
+					ID: "AABBCC112233",
+					CURP: vo.Curp{
+						ID:            "AABBCC112233",
+						LastLastName:  "PEREZ",
+						FirstLastName: "PEREZ",
+						FirstName:     "PEPE",
+						Gender:        "HOMBRE",
+						DOB:           "16/01/2019",
+						State:         "MEXICO",
+						Number:        7,
+					},
 				},
-				{
-					ID:            "AABBCC112233",
-					LastLastName:  "PEREZ",
-					FirstLastName: "PEREZ",
-					FirstName:     "PEPE",
-					Gender:        "HOMBRE",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        7,
+				"RAHE190116MMCMRSA7": {
+					ID: "RAHE190116MMCMRSA7",
+					CURP: vo.Curp{
+						ID:            "RAHE190116MMCMRSA7",
+						LastLastName:  "RAMIREZ",
+						FirstLastName: "HERRERA",
+						FirstName:     "ESTHER ELIZABETH",
+						Gender:        "MUJER",
+						DOB:           "16/01/2019",
+						State:         "MEXICO",
+						Number:        15,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
 	})
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{})
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 		type testScenario struct {
-			name       string
-			parameters string
+			name string
+			body string
 		}
 
 		testScenarios := []testScenario{
 			{
-				name: "No ID",
-				parameters: PreparePayload(t, CensusPayload{
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
-				}),
+				name: "curp is not including: ID",
+				body: Body(t, "||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
 			{
-				name: "No LastLastName",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
-				}),
+				name: "curp is not including: LastLastName",
+				body: Body(t, "RAHE190116MMCMRSA7|||HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
 			{
-				name: "No FirstLastName",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:       "RAHE190116MMCMRSA7",
-					LastLastName: "RAMIREZ",
-					FirstName:    "ESTHER ELIZABETH",
-					Gender:       "MUJER",
-					DOB:          "16/01/2019",
-					State:        "MEXICO",
-					Number:       15,
-				}),
+				name: "curp is not including: FirstLastName",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ||ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
 			{
-				name: "No FirstName",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
-				}),
+				name: "curp is not including: FirstName",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA||MUJER|16/01/2019|MEXICO|15|"),
 			},
 			{
-				name: "No Gender",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-					Number:        15,
-				}),
+				name: "curp is not including: Gender",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH||16/01/2019|MEXICO|15|"),
 			},
 			{
-				name: "No DOB",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					State:         "MEXICO",
-					Number:        15,
-				}),
+				name: "curp is not including: DOB",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER||MEXICO|15|"),
 			},
 			{
-				name: "No State",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					Number:        15,
-				}),
+				name: "curp is not including: State",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019||15|"),
 			},
 			{
-				name: "No Number",
-				parameters: PreparePayload(t, CensusPayload{
-					CurpID:        "RAHE190116MMCMRSA7",
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					State:         "MEXICO",
-				}),
+				name: "curp should have 10 items, it has 9",
+				body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|"),
 			},
 			{
-				name: "No ID\nNo State",
-				parameters: PreparePayload(t, CensusPayload{
-					LastLastName:  "RAMIREZ",
-					FirstLastName: "HERRERA",
-					FirstName:     "ESTHER ELIZABETH",
-					Gender:        "MUJER",
-					DOB:           "16/01/2019",
-					Number:        15,
-				}),
+				name: "curp is not including: ID, State",
+				body: Body(t, "||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019||15|"),
 			},
 		}
 
 		for _, ts := range testScenarios {
 			t.Run(fmt.Sprintf("Test %s", ts.name), func(t *testing.T) {
-				response := influenzaCensus.Take(events.APIGatewayProxyRequest{Body: ts.parameters})
+				response := influenzaCensus.Take(events.APIGatewayProxyRequest{Body: ts.body})
 				require.Equal(t, 400, response.StatusCode)
 				require.Equal(t, ts.name, response.Body)
 			})
@@ -237,39 +156,10 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("raises a 409 conflict when the CURP code already exists", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]store.InfluenzaCensus{
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{
 			"RAHE190116MMCMRSA7": {
-				ID:            "RAHE190116MMCMRSA7",
-				LastLastName:  "RAMIREZ",
-				FirstLastName: "HERRERA",
-				FirstName:     "ESTHER ELIZABETH",
-				Gender:        "MUJER",
-				DOB:           "16/01/2019",
-				State:         "MEXICO",
-				Number:        15,
-			},
-		})
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
-
-		response := influenzaCensus.Take(
-			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				CurpID:        "RAHE190116MMCMRSA7",
-				LastLastName:  "Duplication",
-				FirstLastName: "Duplication",
-				FirstName:     "Duplication",
-				Gender:        "Duplication",
-				DOB:           "Duplication",
-				State:         "Duplication",
-				Number:        15,
-			})},
-		)
-
-		require.Equal(t, response.StatusCode, 409)
-		require.Equal(t, response.Body, "conflict")
-		require.Equal(
-			t,
-			[]store.InfluenzaCensus{
-				{
+				ID: "RAHE190116MMCMRSA7",
+				CURP: vo.Curp{
 					ID:            "RAHE190116MMCMRSA7",
 					LastLastName:  "RAMIREZ",
 					FirstLastName: "HERRERA",
@@ -278,6 +168,34 @@ func TestInfluenzaCensus(t *testing.T) {
 					DOB:           "16/01/2019",
 					State:         "MEXICO",
 					Number:        15,
+				},
+			},
+		})
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+
+		response := influenzaCensus.Take(
+			events.APIGatewayProxyRequest{
+				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
+			},
+		)
+
+		require.Equal(t, response.StatusCode, 409)
+		require.Equal(t, response.Body, "census already exists")
+		require.Equal(
+			t,
+			map[string]domain.FieldCensus{
+				"RAHE190116MMCMRSA7": {
+					ID: "RAHE190116MMCMRSA7",
+					CURP: vo.Curp{
+						ID:            "RAHE190116MMCMRSA7",
+						LastLastName:  "RAMIREZ",
+						FirstLastName: "HERRERA",
+						FirstName:     "ESTHER ELIZABETH",
+						Gender:        "MUJER",
+						DOB:           "16/01/2019",
+						State:         "MEXICO",
+						Number:        15,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
@@ -288,16 +206,9 @@ func TestInfluenzaCensus(t *testing.T) {
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(brokenInfluenzaMemoryStore)
 
 		response := influenzaCensus.Take(
-			events.APIGatewayProxyRequest{Body: PreparePayload(t, CensusPayload{
-				CurpID:        "RAHE190116MMCMRSA7",
-				LastLastName:  "RAMIREZ",
-				FirstLastName: "HERRERA",
-				FirstName:     "ESTHER ELIZABETH",
-				Gender:        "MUJER",
-				DOB:           "16/01/2019",
-				State:         "MEXICO",
-				Number:        15,
-			})},
+			events.APIGatewayProxyRequest{
+				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
+			},
 		)
 
 		require.Equal(t, response.StatusCode, 500)
@@ -305,19 +216,44 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 }
 
-type CensusPayload struct {
-	CurpID        string
-	LastLastName  string
-	FirstLastName string
-	FirstName     string
-	Gender        string
-	DOB           string
-	State         string
-	Number        int
-}
+func Body(t *testing.T, curp string) string {
+	sample := map[string]any{
+		"CURP":            curp,
+		"ApplicationDate": "2023-11-18",
+		"Address": map[string]any{
+			"StreetNumber": "123",
+			"StreetName":   "Main Street",
+			"SuburbName":   "Greenwood",
+		},
+		"TargetGroup": map[string]any{
+			"SixToFiftyNineMonthsOld": true,
+			"SixtyMonthsAndMore":      false,
+		},
+		"RiskGroup": map[string]any{
+			"PregnantWomen":              false,
+			"WellnessPerson":             true,
+			"AIDS":                       false,
+			"Diabetes":                   true,
+			"Obesity":                    false,
+			"AcuteOrChronicHeartDisease": false,
+			"ChronicLungDiseaseIncludesCOPDAndAsthma": false,
+			"Cancer": false,
+			"CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic": false,
+			"RenalInsufficiency": false,
+			"AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS": false,
+			"EssentialHypertension": true,
+		},
+		"OtherRiskGroup": false,
+		"SeasonalInfluenzaVaccinationSchedule": map[string]any{
+			"FirstDose":  true,
+			"SecondDose": false,
+			"AnnualDose": true,
+		},
+		"BatchNumber": "Batch12345",
+		"Rights":      "Basic Healthcare Rights",
+	}
 
-func PreparePayload(t *testing.T, censusPayload CensusPayload) string {
-	body, err := json.Marshal(censusPayload)
+	body, err := json.Marshal(sample)
 	require.NoError(t, err)
 	return string(body)
 }

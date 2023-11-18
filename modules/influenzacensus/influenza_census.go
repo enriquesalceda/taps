@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"taps/domain"
+	"taps/domain/command"
 	"taps/modules/influenzacensus/store"
 )
 
@@ -16,16 +17,17 @@ func NewInfluenzaCensusTaker(store store.CensusStore) *Taker {
 }
 
 func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
-	fieldCensus := domain.FieldCensus{}
-	json.Unmarshal([]byte(fieldCensusParameters.Body), &fieldCensus)
+	censusInput := command.CreateCensus{}
+	json.Unmarshal([]byte(fieldCensusParameters.Body), &censusInput)
 
-	if t.store.Find(fieldCensus.CurpID) {
-		return events.APIGatewayProxyResponse{Body: "conflict", StatusCode: 409}
-	}
-
-	err := fieldCensus.Validate()
+	fieldCensus, err := domain.CreateFieldCensus(censusInput)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
+	}
+
+	found := t.store.Find(fieldCensus.ID)
+	if found {
+		return events.APIGatewayProxyResponse{Body: "census already exists", StatusCode: 409}
 	}
 
 	err = t.store.Save(fieldCensus)

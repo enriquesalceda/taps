@@ -11,7 +11,7 @@ func TestCurp(t *testing.T) {
 	t.Run("Parse CURP from string", func(t *testing.T) {
 		rawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"
 
-		curp, err := vo.ParseCURP(rawCURPData)
+		curp, err := vo.TryParseCURP(rawCURPData)
 
 		require.NoError(t, err)
 		require.Equal(t,
@@ -32,7 +32,7 @@ func TestCurp(t *testing.T) {
 	t.Run("Parse errors when expected position of present item are not present", func(t *testing.T) {
 		incompleteRawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|||16/01/2019|MEXICO|15|"
 
-		curp, err := vo.ParseCURP(incompleteRawCURPData)
+		curp, err := vo.TryParseCURP(incompleteRawCURPData)
 
 		require.Equal(t, vo.Curp{}, curp)
 		require.EqualError(t, err, "curp is not including: FirstName, Gender")
@@ -41,7 +41,7 @@ func TestCurp(t *testing.T) {
 	t.Run("Parse errors when the 10 expected items are not present", func(t *testing.T) {
 		rawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA"
 
-		curp, err := vo.ParseCURP(rawCURPData)
+		curp, err := vo.TryParseCURP(rawCURPData)
 
 		require.Error(t, err)
 		require.Equal(t, vo.Curp{}, curp)
@@ -51,7 +51,7 @@ func TestCurp(t *testing.T) {
 	t.Run("Parse errors when the expected number is a special character", func(t *testing.T) {
 		rawCURPData := "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|?|"
 
-		curp, err := vo.ParseCURP(rawCURPData)
+		curp, err := vo.TryParseCURP(rawCURPData)
 
 		require.Error(t, err)
 		require.Equal(t, vo.Curp{}, curp)

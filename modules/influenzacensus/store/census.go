@@ -1,20 +1,11 @@
 package store
 
-import "taps/domain"
-
-type InfluenzaCensus struct {
-	ID            string
-	FirstLastName string
-	LastLastName  string
-	FirstName     string
-	DOB           string
-	State         string
-	Gender        string
-	Number        int
-}
+import (
+	"taps/domain"
+)
 
 type CensusStore interface {
-	All() []InfluenzaCensus
+	All() map[string]domain.FieldCensus
 	Save(fieldCensus domain.FieldCensus) error
 	Find(id string) bool
 }

@@ -32,14 +32,14 @@ type Curp struct {
 }
 
 func MustParseCURP(rawCURP string) Curp {
-	curp, err := ParseCURP(rawCURP)
+	curp, err := TryParseCURP(rawCURP)
 	if err != nil {
 		panic(err)
 	}
 	return curp
 }
 
-func ParseCURP(rawCURP string) (Curp, error) {
+func TryParseCURP(rawCURP string) (Curp, error) {
 	curpData := strings.Split(rawCURP, "|")
 	if len(curpData) != expectedCURPItemsLength {
 		return Curp{}, errors.New(

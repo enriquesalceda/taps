@@ -7,8 +7,8 @@ import (
 
 type BrokenInfluenzaStore struct{}
 
-func (b BrokenInfluenzaStore) All() []InfluenzaCensus {
-	return []InfluenzaCensus{}
+func (b BrokenInfluenzaStore) All() map[string]domain.FieldCensus {
+	return map[string]domain.FieldCensus{}
 }
 
 func (b BrokenInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
