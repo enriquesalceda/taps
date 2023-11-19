@@ -16,7 +16,7 @@ func NewInfluenzaCensusTaker(store store.CensusStore) *Taker {
 	return &Taker{store: store}
 }
 
-func (t *Taker) Take(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 	censusInput := command.CreateCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &censusInput)
 

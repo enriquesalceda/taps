@@ -17,7 +17,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
-		response := influenzaCensus.Take(
+		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
 				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
@@ -49,7 +49,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
-		response := influenzaCensus.Take(
+		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
 				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
@@ -58,7 +58,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.StatusCode, 200)
 		require.Equal(t, response.Body, "success")
 
-		response = influenzaCensus.Take(
+		response = influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
 				Body: Body(t, "AABBCC112233||PEREZ|PEREZ|PEPE|HOMBRE|16/01/2019|MEXICO|7|"),
 			},
@@ -148,7 +148,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 		for _, ts := range testScenarios {
 			t.Run(fmt.Sprintf("Test %s", ts.name), func(t *testing.T) {
-				response := influenzaCensus.Take(events.APIGatewayProxyRequest{Body: ts.body})
+				response := influenzaCensus.Handle(events.APIGatewayProxyRequest{Body: ts.body})
 				require.Equal(t, 400, response.StatusCode)
 				require.Equal(t, ts.name, response.Body)
 			})
@@ -173,7 +173,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
 
-		response := influenzaCensus.Take(
+		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
 				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
@@ -205,7 +205,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		brokenInfluenzaMemoryStore := store.NewBrokenInfluenzaStore()
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(brokenInfluenzaMemoryStore)
 
-		response := influenzaCensus.Take(
+		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
 				Body: Body(t, "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|"),
 			},
