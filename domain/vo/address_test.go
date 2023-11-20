@@ -64,4 +64,33 @@ func TestAddress(t *testing.T) {
 
 		require.EqualError(t, err, "address should have: street number, street name, suburb name")
 	})
+
+	t.Run("must parse address", func(t *testing.T) {
+		t.Run("successfully", func(t *testing.T) {
+			address := vo.MustParseAddress(
+				"1",
+				"Calle Benito Juarez",
+				"El Centro",
+			)
+
+			require.Equal(t,
+				vo.Address{
+					StreetNumber: "1",
+					StreetName:   "Calle Benito Juarez",
+					SuburbName:   "El Centro",
+				},
+				address,
+			)
+		})
+
+		t.Run("panics when address is invalid", func(t *testing.T) {
+			require.Panics(t, func() {
+				vo.MustParseAddress(
+					"",
+					"",
+					"",
+				)
+			})
+		})
+	})
 }

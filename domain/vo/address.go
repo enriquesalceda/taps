@@ -36,3 +36,12 @@ func TryParseAddress(streetNumber, streetName, suburbName string) (Address, erro
 		SuburbName:   suburbName,
 	}, nil
 }
+
+func MustParseAddress(streetNumber, streetName, suburbName string) Address {
+	address, err := TryParseAddress(streetNumber, streetName, suburbName)
+	if err != nil {
+		panic(err)
+	}
+
+	return address
+}

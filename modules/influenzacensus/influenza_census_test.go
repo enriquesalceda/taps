@@ -45,6 +45,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        15,
 					},
+					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 					TargetGroup: domain.TargetGroup{
 						SixToFiftyNineMonthsOld: true,
@@ -99,6 +100,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        7,
 					},
+					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 					TargetGroup: domain.TargetGroup{
 						SixToFiftyNineMonthsOld: true,
@@ -122,6 +124,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        15,
 					},
+					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 					TargetGroup: domain.TargetGroup{
 						SixToFiftyNineMonthsOld: true,

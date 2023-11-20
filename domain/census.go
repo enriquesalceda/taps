@@ -11,6 +11,7 @@ import (
 type Census struct {
 	ID                                   string
 	CURP                                 vo.Curp
+	Address                              vo.Address
 	ApplicationDate                      time.Time
 	TargetGroup                          TargetGroup
 	RiskGroup                            RiskGroup
@@ -58,6 +59,11 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		return Census{}, errors.New("cannot have an annual dose without a first and second dose")
 	}
 
+	address, err := vo.TryParseAddress(censusInput.Address.StreetNumber, censusInput.Address.StreetName, censusInput.Address.SuburbName)
+	if err != nil {
+		return Census{}, err
+	}
+
 	fieldCensus := Census{
 		ID:              curp.ID,
 		CURP:            curp,
@@ -66,6 +72,7 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 			SixToFiftyNineMonthsOld: censusInput.TargetGroup.SixToFiftyNineMonthsOld,
 			SixtyMonthsAndMore:      censusInput.TargetGroup.SixtyMonthsAndMore,
 		},
+		Address: address,
 		RiskGroup: RiskGroup{
 			PregnantWomen:                           censusInput.RiskGroup.PregnantWomen,
 			WellnessPerson:                          censusInput.RiskGroup.WellnessPerson,

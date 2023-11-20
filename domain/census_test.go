@@ -14,6 +14,11 @@ func TestBuildCensus(t *testing.T) {
 	t.Run("builds a census", func(t *testing.T) {
 		cmd := command.CreateCensus{
 			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+			Address: command.Address{
+				StreetNumber: "18b",
+				StreetName:   "chapulin",
+				SuburbName:   "arcoiris",
+			},
 			TargetGroup: command.TargetGroup{
 				SixToFiftyNineMonthsOld: true,
 				SixtyMonthsAndMore:      false,
@@ -56,6 +61,7 @@ func TestBuildCensus(t *testing.T) {
 					State:         "MEXICO",
 					Number:        15,
 				},
+				Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
 				ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 				TargetGroup: domain.TargetGroup{
 					SixToFiftyNineMonthsOld: true,
@@ -117,4 +123,30 @@ func TestBuildCensus(t *testing.T) {
 		_, err := domain.BuildCensus(cmd, clock)
 		require.EqualError(t, err, "cannot have an annual dose without a first and second dose")
 	})
+
+	t.Run("returns an error when address is not valid", func(t *testing.T) {
+		cmd := command.CreateCensus{
+			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+			Address: command.Address{
+				StreetNumber: "18b",
+				StreetName:   "",
+				SuburbName:   "",
+			},
+			TargetGroup: command.TargetGroup{
+				SixToFiftyNineMonthsOld: true,
+				SixtyMonthsAndMore:      false,
+			},
+		}
+
+		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
+
+		_, err := domain.BuildCensus(cmd, clock)
+		require.EqualError(t, err, "address should have: street name, suburb name")
+	})
+}
+
+func AddressFixture(t *testing.T, streetNumber, streetName, suburbName string) vo.Address {
+	address, err := vo.TryParseAddress(streetNumber, streetName, suburbName)
+	require.NoError(t, err)
+	return address
 }
