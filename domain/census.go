@@ -9,11 +9,12 @@ import (
 )
 
 type Census struct {
-	ID              string
-	CURP            vo.Curp
-	ApplicationDate time.Time
-	TargetGroup     TargetGroup
-	RiskGroup       RiskGroup
+	ID                                   string
+	CURP                                 vo.Curp
+	ApplicationDate                      time.Time
+	TargetGroup                          TargetGroup
+	RiskGroup                            RiskGroup
+	SeasonalInfluenzaVaccinationSchedule SeasonalInfluenzaVaccinationSchedule
 }
 
 type TargetGroup struct {
@@ -36,6 +37,12 @@ type RiskGroup struct {
 	EssentialHypertension                                                                                bool
 }
 
+type SeasonalInfluenzaVaccinationSchedule struct {
+	FirstDose  bool
+	SecondDose bool
+	AnnualDose bool
+}
+
 func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error) {
 	curp, err := vo.TryParseCURP(censusInput.CURP)
 	if err != nil {
@@ -44,6 +51,11 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 
 	if censusInput.TargetGroup.SixToFiftyNineMonthsOld == censusInput.TargetGroup.SixtyMonthsAndMore {
 		return Census{}, errors.New("target group values cannot be the same")
+	}
+
+	if censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose && (censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose == false ||
+		censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose == false) {
+		return Census{}, errors.New("cannot have an annual dose without a first and second dose")
 	}
 
 	fieldCensus := Census{
@@ -67,6 +79,11 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 			RenalInsufficiency: censusInput.RiskGroup.RenalInsufficiency,
 			AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: censusInput.RiskGroup.AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS,
 			EssentialHypertension: censusInput.RiskGroup.EssentialHypertension,
+		},
+		SeasonalInfluenzaVaccinationSchedule: SeasonalInfluenzaVaccinationSchedule{
+			FirstDose:  censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose,
+			SecondDose: censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose,
+			AnnualDose: censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose,
 		},
 	}
 

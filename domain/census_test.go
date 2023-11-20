@@ -32,6 +32,11 @@ func TestBuildCensus(t *testing.T) {
 				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
 				EssentialHypertension: true,
 			},
+			SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
+				FirstDose:  true,
+				SecondDose: false,
+				AnnualDose: false,
+			},
 		}
 		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
 
@@ -70,6 +75,11 @@ func TestBuildCensus(t *testing.T) {
 					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
 					EssentialHypertension: true,
 				},
+				SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
+					FirstDose:  true,
+					SecondDose: false,
+					AnnualDose: false,
+				},
 			},
 			census,
 		)
@@ -87,5 +97,24 @@ func TestBuildCensus(t *testing.T) {
 
 		_, err := domain.BuildCensus(cmd, clock)
 		require.EqualError(t, err, "target group values cannot be the same")
+	})
+
+	t.Run("returns an error when TargetGroup values are the same", func(t *testing.T) {
+		cmd := command.CreateCensus{
+			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+			TargetGroup: command.TargetGroup{
+				SixToFiftyNineMonthsOld: true,
+				SixtyMonthsAndMore:      false,
+			},
+			SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
+				FirstDose:  false,
+				SecondDose: false,
+				AnnualDose: true,
+			},
+		}
+		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
+
+		_, err := domain.BuildCensus(cmd, clock)
+		require.EqualError(t, err, "cannot have an annual dose without a first and second dose")
 	})
 }

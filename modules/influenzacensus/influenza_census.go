@@ -2,6 +2,7 @@ package influenzacensus
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"taps/domain"
 	"taps/domain/command"
@@ -24,6 +25,7 @@ func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) even
 
 	fieldCensus, err := domain.BuildCensus(censusInput, t.clock)
 	if err != nil {
+		fmt.Println(err)
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
 	}
 

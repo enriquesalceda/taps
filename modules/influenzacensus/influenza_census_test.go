@@ -28,7 +28,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 		)
 
-		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
@@ -50,6 +50,11 @@ func TestInfluenzaCensus(t *testing.T) {
 						SixToFiftyNineMonthsOld: true,
 						SixtyMonthsAndMore:      false,
 					},
+					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
+						FirstDose:  true,
+						SecondDose: false,
+						AnnualDose: false,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
@@ -68,7 +73,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 		)
 
-		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, response.Body, "success")
 
 		response = influenzaCensus.Handle(
@@ -77,7 +82,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 		)
 
-		require.Equal(t, response.StatusCode, 200)
+		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
@@ -99,6 +104,11 @@ func TestInfluenzaCensus(t *testing.T) {
 						SixToFiftyNineMonthsOld: true,
 						SixtyMonthsAndMore:      false,
 					},
+					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
+						FirstDose:  true,
+						SecondDose: false,
+						AnnualDose: false,
+					},
 				},
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
@@ -116,6 +126,11 @@ func TestInfluenzaCensus(t *testing.T) {
 					TargetGroup: domain.TargetGroup{
 						SixToFiftyNineMonthsOld: true,
 						SixtyMonthsAndMore:      false,
+					},
+					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
+						FirstDose:  true,
+						SecondDose: false,
+						AnnualDose: false,
 					},
 				},
 			},
@@ -174,7 +189,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		for _, ts := range testScenarios {
 			t.Run(fmt.Sprintf("Test %s", ts.name), func(t *testing.T) {
 				response := influenzaCensus.Handle(events.APIGatewayProxyRequest{Body: ts.body})
-				require.Equal(t, 400, response.StatusCode)
+				require.Equal(t, response.StatusCode, 400)
 				require.Equal(t, ts.name, response.Body)
 			})
 		}
@@ -207,7 +222,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 		)
 
-		require.Equal(t, response.StatusCode, 409)
+		require.Equal(t, 409, response.StatusCode)
 		require.Equal(t, response.Body, "census already exists")
 		require.Equal(
 			t,
@@ -241,7 +256,7 @@ func TestInfluenzaCensus(t *testing.T) {
 			},
 		)
 
-		require.Equal(t, response.StatusCode, 500)
+		require.Equal(t, 500, response.StatusCode)
 		require.Equal(t, response.Body, "internal server error")
 	})
 }
@@ -274,7 +289,7 @@ func Body(t *testing.T, curp string) string {
 		},
 		"OtherRiskGroup": false,
 		"SeasonalInfluenzaVaccinationSchedule": map[string]any{
-			"FirstDose":  false,
+			"FirstDose":  true,
 			"SecondDose": false,
 			"AnnualDose": false,
 		},
