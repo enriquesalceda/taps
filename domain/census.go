@@ -6,8 +6,9 @@ import (
 )
 
 type FieldCensus struct {
-	ID   string
-	CURP vo.Curp
+	ID              string
+	CURP            vo.Curp
+	ApplicationDate string
 }
 
 func CreateFieldCensus(censusInput command.CreateCensus) (FieldCensus, error) {
