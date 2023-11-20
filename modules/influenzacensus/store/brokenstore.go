@@ -7,11 +7,11 @@ import (
 
 type BrokenInfluenzaStore struct{}
 
-func (b BrokenInfluenzaStore) All() map[string]domain.FieldCensus {
-	return map[string]domain.FieldCensus{}
+func (b BrokenInfluenzaStore) All() map[string]domain.Census {
+	return map[string]domain.Census{}
 }
 
-func (b BrokenInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
+func (b BrokenInfluenzaStore) Save(fieldCensus domain.Census) error {
 	return errors.New("something went wrong")
 }
 

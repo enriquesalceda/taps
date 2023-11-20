@@ -25,7 +25,7 @@ func TestBuildCensus(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t,
-			domain.FieldCensus{
+			domain.Census{
 				ID: "RAHE190116MMCMRSA7",
 				CURP: vo.Curp{
 					ID:            "RAHE190116MMCMRSA7",

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type FieldCensus struct {
+type Census struct {
 	ID              string
 	CURP            vo.Curp
 	ApplicationDate time.Time
@@ -20,17 +20,17 @@ type TargetGroup struct {
 	SixtyMonthsAndMore      bool
 }
 
-func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (FieldCensus, error) {
+func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error) {
 	curp, err := vo.TryParseCURP(censusInput.CURP)
 	if err != nil {
-		return FieldCensus{}, err
+		return Census{}, err
 	}
 
 	if censusInput.TargetGroup.SixToFiftyNineMonthsOld == censusInput.TargetGroup.SixtyMonthsAndMore {
-		return FieldCensus{}, errors.New("target group values cannot be the same")
+		return Census{}, errors.New("target group values cannot be the same")
 	}
 
-	fieldCensus := FieldCensus{
+	fieldCensus := Census{
 		ID:              curp.ID,
 		CURP:            curp,
 		ApplicationDate: clock.Now(),

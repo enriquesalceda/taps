@@ -3,7 +3,7 @@ package store
 import "taps/domain"
 
 type InMemoryInfluenzaStore struct {
-	all map[string]domain.FieldCensus
+	all map[string]domain.Census
 }
 
 func (i *InMemoryInfluenzaStore) Find(id string) bool {
@@ -11,17 +11,17 @@ func (i *InMemoryInfluenzaStore) Find(id string) bool {
 	return found
 }
 
-func NewInMemoryInfluenzaStore(census map[string]domain.FieldCensus) *InMemoryInfluenzaStore {
+func NewInMemoryInfluenzaStore(census map[string]domain.Census) *InMemoryInfluenzaStore {
 	return &InMemoryInfluenzaStore{
 		all: census,
 	}
 }
 
-func (i *InMemoryInfluenzaStore) All() map[string]domain.FieldCensus {
+func (i *InMemoryInfluenzaStore) All() map[string]domain.Census {
 	return i.all
 }
 
-func (i *InMemoryInfluenzaStore) Save(fieldCensus domain.FieldCensus) error {
+func (i *InMemoryInfluenzaStore) Save(fieldCensus domain.Census) error {
 	i.all[fieldCensus.ID] = fieldCensus
 	return nil
 }

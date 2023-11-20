@@ -16,7 +16,7 @@ import (
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
 			influenzaMemoryStore,
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
@@ -32,7 +32,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			map[string]domain.FieldCensus{
+			map[string]domain.Census{
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
 					CURP: vo.Curp{
@@ -56,7 +56,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("save multiple census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
 			influenzaMemoryStore,
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
@@ -81,7 +81,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "success")
 		require.Equal(
 			t,
-			map[string]domain.FieldCensus{
+			map[string]domain.Census{
 				"AABBCC112233": {
 					ID: "AABBCC112233",
 					CURP: vo.Curp{
@@ -124,7 +124,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
-			store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{}),
+			store.NewInMemoryInfluenzaStore(map[string]domain.Census{}),
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		)
 		type testScenario struct {
@@ -181,7 +181,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("raises a 409 conflict when the CURP code already exists", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{
+		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{
 			"RAHE190116MMCMRSA7": {
 				ID: "RAHE190116MMCMRSA7",
 				CURP: vo.Curp{
@@ -211,7 +211,7 @@ func TestInfluenzaCensus(t *testing.T) {
 		require.Equal(t, response.Body, "census already exists")
 		require.Equal(
 			t,
-			map[string]domain.FieldCensus{
+			map[string]domain.Census{
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
 					CURP: vo.Curp{
