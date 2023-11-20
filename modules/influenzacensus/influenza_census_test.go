@@ -46,6 +46,10 @@ func TestInfluenzaCensus(t *testing.T) {
 						Number:        15,
 					},
 					ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+					TargetGroup: domain.TargetGroup{
+						SixToFiftyNineMonthsOld: true,
+						SixtyMonthsAndMore:      false,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
@@ -91,6 +95,10 @@ func TestInfluenzaCensus(t *testing.T) {
 						Number:        7,
 					},
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
+					TargetGroup: domain.TargetGroup{
+						SixToFiftyNineMonthsOld: true,
+						SixtyMonthsAndMore:      false,
+					},
 				},
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
@@ -105,6 +113,10 @@ func TestInfluenzaCensus(t *testing.T) {
 						Number:        15,
 					},
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
+					TargetGroup: domain.TargetGroup{
+						SixToFiftyNineMonthsOld: true,
+						SixtyMonthsAndMore:      false,
+					},
 				},
 			},
 			influenzaMemoryStore.All())
@@ -243,7 +255,7 @@ func Body(t *testing.T, curp string) string {
 			"SuburbName":   "Greenwood",
 		},
 		"TargetGroup": map[string]any{
-			"SixToFiftyNineMonthsOld": false,
+			"SixToFiftyNineMonthsOld": true,
 			"SixtyMonthsAndMore":      false,
 		},
 		"RiskGroup": map[string]any{
