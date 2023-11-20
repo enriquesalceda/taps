@@ -20,7 +20,7 @@ func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) even
 	censusInput := command.CreateCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &censusInput)
 
-	fieldCensus, err := domain.CreateFieldCensus(censusInput)
+	fieldCensus, err := domain.BuildCensus(censusInput)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
 	}

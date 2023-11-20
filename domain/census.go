@@ -11,7 +11,7 @@ type FieldCensus struct {
 	ApplicationDate string
 }
 
-func CreateFieldCensus(censusInput command.CreateCensus) (FieldCensus, error) {
+func BuildCensus(censusInput command.CreateCensus) (FieldCensus, error) {
 	curp, err := vo.TryParseCURP(censusInput.CURP)
 	if err != nil {
 		return FieldCensus{}, err
