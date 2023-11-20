@@ -18,6 +18,20 @@ func TestBuildCensus(t *testing.T) {
 				SixToFiftyNineMonthsOld: true,
 				SixtyMonthsAndMore:      false,
 			},
+			RiskGroup: command.RiskGroup{
+				PregnantWomen:                           true,
+				WellnessPerson:                          true,
+				AIDS:                                    true,
+				Diabetes:                                true,
+				Obesity:                                 true,
+				AcuteOrChronicHeartDisease:              true,
+				ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+				Cancer:                                  true,
+				CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+				RenalInsufficiency: true,
+				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+				EssentialHypertension: true,
+			},
 		}
 		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
 
@@ -41,6 +55,20 @@ func TestBuildCensus(t *testing.T) {
 				TargetGroup: domain.TargetGroup{
 					SixToFiftyNineMonthsOld: true,
 					SixtyMonthsAndMore:      false,
+				},
+				RiskGroup: domain.RiskGroup{
+					PregnantWomen:                           true,
+					WellnessPerson:                          true,
+					AIDS:                                    true,
+					Diabetes:                                true,
+					Obesity:                                 true,
+					AcuteOrChronicHeartDisease:              true,
+					ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+					Cancer:                                  true,
+					CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+					RenalInsufficiency: true,
+					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+					EssentialHypertension: true,
 				},
 			},
 			census,

@@ -13,11 +13,27 @@ type Census struct {
 	CURP            vo.Curp
 	ApplicationDate time.Time
 	TargetGroup     TargetGroup
+	RiskGroup       RiskGroup
 }
 
 type TargetGroup struct {
 	SixToFiftyNineMonthsOld bool
 	SixtyMonthsAndMore      bool
+}
+
+type RiskGroup struct {
+	PregnantWomen                                                                                        bool
+	WellnessPerson                                                                                       bool
+	AIDS                                                                                                 bool
+	Diabetes                                                                                             bool
+	Obesity                                                                                              bool
+	AcuteOrChronicHeartDisease                                                                           bool
+	ChronicLungDiseaseIncludesCOPDAndAsthma                                                              bool
+	Cancer                                                                                               bool
+	CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic bool
+	RenalInsufficiency                                                                                   bool
+	AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS                                           bool
+	EssentialHypertension                                                                                bool
 }
 
 func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error) {
@@ -37,6 +53,20 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		TargetGroup: TargetGroup{
 			SixToFiftyNineMonthsOld: censusInput.TargetGroup.SixToFiftyNineMonthsOld,
 			SixtyMonthsAndMore:      censusInput.TargetGroup.SixtyMonthsAndMore,
+		},
+		RiskGroup: RiskGroup{
+			PregnantWomen:                           censusInput.RiskGroup.PregnantWomen,
+			WellnessPerson:                          censusInput.RiskGroup.WellnessPerson,
+			AIDS:                                    censusInput.RiskGroup.AIDS,
+			Diabetes:                                censusInput.RiskGroup.Diabetes,
+			Obesity:                                 censusInput.RiskGroup.Obesity,
+			AcuteOrChronicHeartDisease:              censusInput.RiskGroup.AcuteOrChronicHeartDisease,
+			ChronicLungDiseaseIncludesCOPDAndAsthma: censusInput.RiskGroup.ChronicLungDiseaseIncludesCOPDAndAsthma,
+			Cancer:                                  censusInput.RiskGroup.Cancer,
+			CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: censusInput.RiskGroup.CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic,
+			RenalInsufficiency: censusInput.RiskGroup.RenalInsufficiency,
+			AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: censusInput.RiskGroup.AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS,
+			EssentialHypertension: censusInput.RiskGroup.EssentialHypertension,
 		},
 	}
 
