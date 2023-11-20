@@ -2,7 +2,6 @@ package command
 
 type CreateCensus struct {
 	CURP                                 string
-	ApplicationDate                      string
 	Address                              Address
 	TargetGroup                          TargetGroup
 	RiskGroup                            RiskGroup

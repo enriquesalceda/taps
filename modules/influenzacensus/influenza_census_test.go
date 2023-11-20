@@ -218,8 +218,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 func Body(t *testing.T, curp string) string {
 	sample := map[string]any{
-		"CURP":            curp,
-		"ApplicationDate": "2023-11-18",
+		"CURP": curp,
 		"Address": map[string]any{
 			"StreetNumber": "123",
 			"StreetName":   "Main Street",
