@@ -6,21 +6,23 @@ import (
 	"taps/domain"
 	"taps/domain/command"
 	"taps/modules/influenzacensus/store"
+	"taps/utils/clk"
 )
 
 type Taker struct {
 	store store.CensusStore
+	clock clk.Clk
 }
 
-func NewInfluenzaCensusTaker(store store.CensusStore) *Taker {
-	return &Taker{store: store}
+func NewInfluenzaCensusTaker(store store.CensusStore, clock clk.Clk) *Taker {
+	return &Taker{store: store, clock: clock}
 }
 
 func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 	censusInput := command.CreateCensus{}
 	json.Unmarshal([]byte(fieldCensusParameters.Body), &censusInput)
 
-	fieldCensus, err := domain.BuildCensus(censusInput)
+	fieldCensus, err := domain.BuildCensus(censusInput, t.clock)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
 	}

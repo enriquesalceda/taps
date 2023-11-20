@@ -9,13 +9,18 @@ import (
 	"taps/domain/vo"
 	"taps/modules/influenzacensus"
 	"taps/modules/influenzacensus/store"
+	"taps/utils/clk"
 	"testing"
+	"time"
 )
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
 		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
+			influenzaMemoryStore,
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
 		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
@@ -40,6 +45,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        15,
 					},
+					ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			influenzaMemoryStore.All())
@@ -47,7 +53,10 @@ func TestInfluenzaCensus(t *testing.T) {
 
 	t.Run("save multiple census", func(t *testing.T) {
 		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
+			influenzaMemoryStore,
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
 		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
@@ -81,6 +90,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        7,
 					},
+					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 				},
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
@@ -94,14 +104,17 @@ func TestInfluenzaCensus(t *testing.T) {
 						State:         "MEXICO",
 						Number:        15,
 					},
+					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			influenzaMemoryStore.All())
 	})
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{})
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
+			store.NewInMemoryInfluenzaStore(map[string]domain.FieldCensus{}),
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 		type testScenario struct {
 			name string
 			body string
@@ -171,7 +184,10 @@ func TestInfluenzaCensus(t *testing.T) {
 				},
 			},
 		})
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(influenzaMemoryStore)
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
+			influenzaMemoryStore,
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
 		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
@@ -202,8 +218,10 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("raises a 500 when the store returns an error", func(t *testing.T) {
-		brokenInfluenzaMemoryStore := store.NewBrokenInfluenzaStore()
-		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(brokenInfluenzaMemoryStore)
+		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
+			store.NewBrokenInfluenzaStore(),
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
 		response := influenzaCensus.Handle(
 			events.APIGatewayProxyRequest{
