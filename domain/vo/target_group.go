@@ -7,7 +7,7 @@ type TargetGroup struct {
 	SixtyMonthsAndMore      bool
 }
 
-func TryBuildTargetGroup(sixToFiftyNineMonthsOld bool, sixtyMonthsAndMore bool) (TargetGroup, error) {
+func TryParseTargetGroup(sixToFiftyNineMonthsOld bool, sixtyMonthsAndMore bool) (TargetGroup, error) {
 	if sixToFiftyNineMonthsOld == sixtyMonthsAndMore {
 		return TargetGroup{}, errors.New("target group values cannot be the same")
 	}
@@ -18,8 +18,8 @@ func TryBuildTargetGroup(sixToFiftyNineMonthsOld bool, sixtyMonthsAndMore bool) 
 	}, nil
 }
 
-func MustBuildTargetGroup(sixToFiftyNineMonthsOld bool, sixtyMonthsAndMore bool) TargetGroup {
-	targetGroup, err := TryBuildTargetGroup(sixToFiftyNineMonthsOld, sixtyMonthsAndMore)
+func MustParseTargetGroup(sixToFiftyNineMonthsOld bool, sixtyMonthsAndMore bool) TargetGroup {
+	targetGroup, err := TryParseTargetGroup(sixToFiftyNineMonthsOld, sixtyMonthsAndMore)
 	if err != nil {
 		panic(err)
 	}

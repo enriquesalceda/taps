@@ -47,7 +47,7 @@ func TestInfluenzaCensus(t *testing.T) {
 					},
 					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-					TargetGroup:     vo.MustBuildTargetGroup(true, false),
+					TargetGroup:     vo.MustParseTargetGroup(true, false),
 					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
 						FirstDose:  true,
 						SecondDose: false,
@@ -100,7 +100,7 @@ func TestInfluenzaCensus(t *testing.T) {
 					},
 					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
-					TargetGroup:     vo.MustBuildTargetGroup(true, false),
+					TargetGroup:     vo.MustParseTargetGroup(true, false),
 					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
 						FirstDose:  true,
 						SecondDose: false,
@@ -122,7 +122,7 @@ func TestInfluenzaCensus(t *testing.T) {
 					},
 					Address:         vo.MustParseAddress("123", "Main Street", "Greenwood"),
 					ApplicationDate: time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
-					TargetGroup:     vo.MustBuildTargetGroup(true, false),
+					TargetGroup:     vo.MustParseTargetGroup(true, false),
 					SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
 						FirstDose:  true,
 						SecondDose: false,

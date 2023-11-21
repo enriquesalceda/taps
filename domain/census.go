@@ -51,7 +51,7 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		return Census{}, errors.New("cannot have an annual dose without a first and second dose")
 	}
 
-	targetGroup, err := vo.TryBuildTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
+	targetGroup, err := vo.TryParseTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
 	if err != nil {
 		return Census{}, err
 	}

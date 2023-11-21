@@ -8,7 +8,7 @@ import (
 
 func TestTargetGroup(t *testing.T) {
 	t.Run("builds a target group", func(t *testing.T) {
-		targetGroup, err := vo.TryBuildTargetGroup(true, false)
+		targetGroup, err := vo.TryParseTargetGroup(true, false)
 		require.NoError(t, err)
 		require.Equal(t,
 			vo.TargetGroup{
@@ -20,15 +20,15 @@ func TestTargetGroup(t *testing.T) {
 	})
 
 	t.Run("validates only one target group can be true", func(t *testing.T) {
-		_, err := vo.TryBuildTargetGroup(true, true)
+		_, err := vo.TryParseTargetGroup(true, true)
 		require.EqualError(t, err, "target group values cannot be the same")
 
-		_, err = vo.TryBuildTargetGroup(false, false)
+		_, err = vo.TryParseTargetGroup(false, false)
 		require.EqualError(t, err, "target group values cannot be the same")
 	})
 
 	t.Run("must create a target group", func(t *testing.T) {
-		targetGroup := vo.MustBuildTargetGroup(true, false)
+		targetGroup := vo.MustParseTargetGroup(true, false)
 		require.Equal(t,
 			vo.TargetGroup{
 				SixToFiftyNineMonthsOld: true,
