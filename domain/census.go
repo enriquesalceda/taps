@@ -19,11 +19,6 @@ type Census struct {
 	Rights                               vo.Right
 }
 
-type TargetGroup struct {
-	SixToFiftyNineMonthsOld bool
-	SixtyMonthsAndMore      bool
-}
-
 type RiskGroup struct {
 	PregnantWomen                                                                                        bool
 	WellnessPerson                                                                                       bool
