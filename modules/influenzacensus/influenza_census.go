@@ -24,18 +24,29 @@ func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) even
 
 	fieldCensus, err := domain.BuildCensus(censusInput, t.clock)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}
 	}
 
-	found := t.store.Find(fieldCensus.ID)
-	if found {
-		return events.APIGatewayProxyResponse{Body: "census already exists", StatusCode: 409}
+	if t.store.Find(fieldCensus.ID) {
+		return events.APIGatewayProxyResponse{
+			Body:       "census already exists",
+			StatusCode: 409,
+		}
 	}
 
 	err = t.store.Save(fieldCensus)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: "internal server error", StatusCode: 500}
+		return events.APIGatewayProxyResponse{
+			Body:       "internal server error",
+			StatusCode: 500,
+		}
 	}
 
-	return events.APIGatewayProxyResponse{Body: "success", StatusCode: 200}
+	return events.APIGatewayProxyResponse{
+		Body:       "success",
+		StatusCode: 200,
+	}
 }
