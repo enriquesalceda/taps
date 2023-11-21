@@ -12,42 +12,43 @@ import (
 
 func TestBuildCensus(t *testing.T) {
 	t.Run("builds a census", func(t *testing.T) {
-		cmd := command.CreateCensus{
-			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
-			Address: command.Address{
-				StreetNumber: "18b",
-				StreetName:   "chapulin",
-				SuburbName:   "arcoiris",
+		census, err := domain.BuildCensus(
+			command.CreateCensus{
+				CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+				Address: command.Address{
+					StreetNumber: "18b",
+					StreetName:   "chapulin",
+					SuburbName:   "arcoiris",
+				},
+				TargetGroup: command.TargetGroup{
+					SixToFiftyNineMonthsOld: true,
+					SixtyMonthsAndMore:      false,
+				},
+				RiskGroup: command.RiskGroup{
+					PregnantWomen:                           true,
+					WellnessPerson:                          true,
+					AIDS:                                    true,
+					Diabetes:                                true,
+					Obesity:                                 true,
+					AcuteOrChronicHeartDisease:              true,
+					ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+					Cancer:                                  true,
+					CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+					RenalInsufficiency: true,
+					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+					EssentialHypertension: true,
+				},
+				SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
+					FirstDose:  true,
+					SecondDose: false,
+					AnnualDose: false,
+				},
+				Rights: "ISSSTE",
 			},
-			TargetGroup: command.TargetGroup{
-				SixToFiftyNineMonthsOld: true,
-				SixtyMonthsAndMore:      false,
-			},
-			RiskGroup: command.RiskGroup{
-				PregnantWomen:                           true,
-				WellnessPerson:                          true,
-				AIDS:                                    true,
-				Diabetes:                                true,
-				Obesity:                                 true,
-				AcuteOrChronicHeartDisease:              true,
-				ChronicLungDiseaseIncludesCOPDAndAsthma: true,
-				Cancer:                                  true,
-				CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
-				RenalInsufficiency: true,
-				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
-				EssentialHypertension: true,
-			},
-			SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
-				FirstDose:  true,
-				SecondDose: false,
-				AnnualDose: false,
-			},
-		}
-		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
-		census, err := domain.BuildCensus(cmd, clock)
 		require.NoError(t, err)
-
 		require.Equal(t,
 			domain.Census{
 				ID: "RAHE190116MMCMRSA7",
@@ -86,62 +87,86 @@ func TestBuildCensus(t *testing.T) {
 					SecondDose: false,
 					AnnualDose: false,
 				},
+				Rights: vo.Rights.ISSSTE,
 			},
 			census,
 		)
 	})
 
 	t.Run("returns an error when TargetGroup values are the same", func(t *testing.T) {
-		cmd := command.CreateCensus{
-			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
-			TargetGroup: command.TargetGroup{
-				SixToFiftyNineMonthsOld: true,
-				SixtyMonthsAndMore:      true,
+		_, err := domain.BuildCensus(
+			command.CreateCensus{
+				CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+				TargetGroup: command.TargetGroup{
+					SixToFiftyNineMonthsOld: true,
+					SixtyMonthsAndMore:      true,
+				},
 			},
-		}
-		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
-		_, err := domain.BuildCensus(cmd, clock)
 		require.EqualError(t, err, "target group values cannot be the same")
 	})
 
 	t.Run("returns an error when TargetGroup values are the same", func(t *testing.T) {
-		cmd := command.CreateCensus{
-			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
-			TargetGroup: command.TargetGroup{
-				SixToFiftyNineMonthsOld: true,
-				SixtyMonthsAndMore:      false,
+		_, err := domain.BuildCensus(
+			command.CreateCensus{
+				CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+				TargetGroup: command.TargetGroup{
+					SixToFiftyNineMonthsOld: true,
+					SixtyMonthsAndMore:      false,
+				},
+				SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
+					FirstDose:  false,
+					SecondDose: false,
+					AnnualDose: true,
+				},
 			},
-			SeasonalInfluenzaVaccinationSchedule: command.SeasonalInfluenzaVaccinationSchedule{
-				FirstDose:  false,
-				SecondDose: false,
-				AnnualDose: true,
-			},
-		}
-		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
-		_, err := domain.BuildCensus(cmd, clock)
 		require.EqualError(t, err, "cannot have an annual dose without a first and second dose")
 	})
 
 	t.Run("returns an error when address is not valid", func(t *testing.T) {
-		cmd := command.CreateCensus{
-			CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
-			Address: command.Address{
-				StreetNumber: "18b",
-				StreetName:   "",
-				SuburbName:   "",
+		_, err := domain.BuildCensus(
+			command.CreateCensus{
+				CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+				Address: command.Address{
+					StreetNumber: "18b",
+					StreetName:   "",
+					SuburbName:   "",
+				},
+				TargetGroup: command.TargetGroup{
+					SixToFiftyNineMonthsOld: true,
+					SixtyMonthsAndMore:      false,
+				},
 			},
-			TargetGroup: command.TargetGroup{
-				SixToFiftyNineMonthsOld: true,
-				SixtyMonthsAndMore:      false,
-			},
-		}
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
 
-		clock := clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))
-
-		_, err := domain.BuildCensus(cmd, clock)
 		require.EqualError(t, err, "address should have: street name, suburb name")
+	})
+
+	t.Run("returns an error when right is not valid", func(t *testing.T) {
+		_, err := domain.BuildCensus(
+			command.CreateCensus{
+				CURP: "RAHE190116MMCMRSA7||RAMIREZ|HERRERA|ESTHER ELIZABETH|MUJER|16/01/2019|MEXICO|15|",
+				Address: command.Address{
+					StreetNumber: "18b",
+					StreetName:   "Emiliano Zapata",
+					SuburbName:   "El Hormiguero",
+				},
+				TargetGroup: command.TargetGroup{
+					SixToFiftyNineMonthsOld: true,
+					SixtyMonthsAndMore:      false,
+				},
+				Rights: "INVALID-RIGHT",
+			},
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
+
+		require.EqualError(t, err, "invalid rights")
 	})
 }
 

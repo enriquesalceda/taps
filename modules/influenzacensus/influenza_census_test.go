@@ -56,6 +56,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						SecondDose: false,
 						AnnualDose: false,
 					},
+					Rights: vo.Rights.ISSSTE,
 				},
 			},
 			influenzaMemoryStore.All())
@@ -111,6 +112,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						SecondDose: false,
 						AnnualDose: false,
 					},
+					Rights: vo.Rights.ISSSTE,
 				},
 				"RAHE190116MMCMRSA7": {
 					ID: "RAHE190116MMCMRSA7",
@@ -135,6 +137,7 @@ func TestInfluenzaCensus(t *testing.T) {
 						SecondDose: false,
 						AnnualDose: false,
 					},
+					Rights: vo.Rights.ISSSTE,
 				},
 			},
 			influenzaMemoryStore.All())
@@ -297,7 +300,7 @@ func Body(t *testing.T, curp string) string {
 			"AnnualDose": false,
 		},
 		"BatchNumber": "Batch12345",
-		"Rights":      "Basic Healthcare Rights",
+		"Rights":      "ISSSTE",
 	}
 
 	body, err := json.Marshal(sample)

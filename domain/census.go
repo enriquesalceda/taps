@@ -16,6 +16,7 @@ type Census struct {
 	TargetGroup                          TargetGroup
 	RiskGroup                            RiskGroup
 	SeasonalInfluenzaVaccinationSchedule SeasonalInfluenzaVaccinationSchedule
+	Rights                               vo.Right
 }
 
 type TargetGroup struct {
@@ -64,6 +65,11 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		return Census{}, err
 	}
 
+	right, err := vo.TryParseRights(censusInput.Rights)
+	if err != nil {
+		return Census{}, err
+	}
+
 	fieldCensus := Census{
 		ID:              curp.ID,
 		CURP:            curp,
@@ -92,6 +98,7 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 			SecondDose: censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose,
 			AnnualDose: censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose,
 		},
+		Rights: right,
 	}
 
 	return fieldCensus, nil
