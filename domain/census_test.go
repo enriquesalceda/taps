@@ -64,10 +64,7 @@ func TestBuildCensus(t *testing.T) {
 				},
 				Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
 				ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-				TargetGroup: domain.TargetGroup{
-					SixToFiftyNineMonthsOld: true,
-					SixtyMonthsAndMore:      false,
-				},
+				TargetGroup:     vo.MustBuildTargetGroup(true, false),
 				RiskGroup: domain.RiskGroup{
 					PregnantWomen:                           true,
 					WellnessPerson:                          true,

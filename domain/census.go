@@ -13,7 +13,7 @@ type Census struct {
 	CURP                                 vo.Curp
 	Address                              vo.Address
 	ApplicationDate                      time.Time
-	TargetGroup                          TargetGroup
+	TargetGroup                          vo.TargetGroup
 	RiskGroup                            RiskGroup
 	SeasonalInfluenzaVaccinationSchedule SeasonalInfluenzaVaccinationSchedule
 	Rights                               vo.Right
@@ -51,13 +51,14 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		return Census{}, err
 	}
 
-	if censusInput.TargetGroup.SixToFiftyNineMonthsOld == censusInput.TargetGroup.SixtyMonthsAndMore {
-		return Census{}, errors.New("target group values cannot be the same")
-	}
-
 	if censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose && (censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose == false ||
 		censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose == false) {
 		return Census{}, errors.New("cannot have an annual dose without a first and second dose")
+	}
+
+	targetGroup, err := vo.TryBuildTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
+	if err != nil {
+		return Census{}, err
 	}
 
 	address, err := vo.TryParseAddress(censusInput.Address.StreetNumber, censusInput.Address.StreetName, censusInput.Address.SuburbName)
@@ -74,11 +75,8 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 		ID:              curp.ID,
 		CURP:            curp,
 		ApplicationDate: clock.Now(),
-		TargetGroup: TargetGroup{
-			SixToFiftyNineMonthsOld: censusInput.TargetGroup.SixToFiftyNineMonthsOld,
-			SixtyMonthsAndMore:      censusInput.TargetGroup.SixtyMonthsAndMore,
-		},
-		Address: address,
+		TargetGroup:     targetGroup,
+		Address:         address,
 		RiskGroup: RiskGroup{
 			PregnantWomen:                           censusInput.RiskGroup.PregnantWomen,
 			WellnessPerson:                          censusInput.RiskGroup.WellnessPerson,
