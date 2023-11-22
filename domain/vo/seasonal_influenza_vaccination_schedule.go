@@ -18,9 +18,13 @@ func MustNewSeasonalInfluenzaVaccinationSchedule(firstDose, secondDose, annualDo
 }
 
 func TryNewSeasonalInfluenzaVaccinationSchedule(firstDose, secondDose, annualDose bool) (SeasonalInfluenzaVaccinationSchedule, error) {
-	if (annualDose && (!firstDose || !secondDose)) || (secondDose && !firstDose) {
-		return SeasonalInfluenzaVaccinationSchedule{}, errors.New("doses should be in order")
+	if dosesAreInOrder(firstDose, secondDose, annualDose) {
+		return SeasonalInfluenzaVaccinationSchedule{FirstDose: firstDose, SecondDose: secondDose, AnnualDose: annualDose}, nil
 	}
 
-	return SeasonalInfluenzaVaccinationSchedule{FirstDose: firstDose, SecondDose: secondDose, AnnualDose: annualDose}, nil
+	return SeasonalInfluenzaVaccinationSchedule{}, errors.New("doses should be in order")
+}
+
+func dosesAreInOrder(firstDose, secondDose, annualDose bool) bool {
+	return !((annualDose && (!firstDose || !secondDose)) || (secondDose && !firstDose))
 }

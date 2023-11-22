@@ -14,23 +14,8 @@ type Census struct {
 	TargetGroup                          vo.TargetGroup
 	SeasonalInfluenzaVaccinationSchedule vo.SeasonalInfluenzaVaccinationSchedule
 	Rights                               vo.Right
-	RiskGroup                            RiskGroup
+	RiskGroup                            vo.RiskGroup
 	ApplicationDate                      time.Time
-}
-
-type RiskGroup struct {
-	PregnantWomen                                               bool
-	WellnessPerson                                              bool
-	AIDS                                                        bool
-	Diabetes                                                    bool
-	Obesity                                                     bool
-	AcuteOrChronicHeartDisease                                  bool
-	ChronicLungDiseaseIncludesCOPDAndAsthma                     bool
-	Cancer                                                      bool
-	ChronicConditionsThatRequireProlongedConsumptionOfSalicylic bool
-	RenalInsufficiency                                          bool
-	AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS  bool
-	EssentialHypertension                                       bool
 }
 
 func BuildCensus(censusInput command.CreateCensus, clock clk.Clock) (Census, error) {
@@ -39,17 +24,28 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clock) (Census, err
 		return Census{}, err
 	}
 
-	seasonalInfluenzaVaccinationSchedule, err := vo.TryNewSeasonalInfluenzaVaccinationSchedule(censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose, censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose, censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose)
+	seasonalInfluenzaVaccinationSchedule, err := vo.TryNewSeasonalInfluenzaVaccinationSchedule(
+		censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose,
+		censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose,
+		censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose,
+	)
 	if err != nil {
 		return Census{}, err
 	}
 
-	targetGroup, err := vo.TryNewTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
+	targetGroup, err := vo.TryNewTargetGroup(
+		censusInput.TargetGroup.SixToFiftyNineMonthsOld,
+		censusInput.TargetGroup.SixtyMonthsAndMore,
+	)
 	if err != nil {
 		return Census{}, err
 	}
 
-	address, err := vo.TryNewAddress(censusInput.Address.StreetNumber, censusInput.Address.StreetName, censusInput.Address.SuburbName)
+	address, err := vo.TryNewAddress(
+		censusInput.Address.StreetNumber,
+		censusInput.Address.StreetName,
+		censusInput.Address.SuburbName,
+	)
 	if err != nil {
 		return Census{}, err
 	}
@@ -65,20 +61,20 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clock) (Census, err
 		ApplicationDate: clock.Now(),
 		TargetGroup:     targetGroup,
 		Address:         address,
-		RiskGroup: RiskGroup{
-			PregnantWomen:                           censusInput.RiskGroup.PregnantWomen,
-			WellnessPerson:                          censusInput.RiskGroup.WellnessPerson,
-			AIDS:                                    censusInput.RiskGroup.AIDS,
-			Diabetes:                                censusInput.RiskGroup.Diabetes,
-			Obesity:                                 censusInput.RiskGroup.Obesity,
-			AcuteOrChronicHeartDisease:              censusInput.RiskGroup.AcuteOrChronicHeartDisease,
-			ChronicLungDiseaseIncludesCOPDAndAsthma: censusInput.RiskGroup.ChronicLungDiseaseIncludesCOPDAndAsthma,
-			Cancer:                                  censusInput.RiskGroup.Cancer,
-			ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: censusInput.RiskGroup.CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic,
-			RenalInsufficiency: censusInput.RiskGroup.RenalInsufficiency,
-			AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: censusInput.RiskGroup.AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS,
-			EssentialHypertension: censusInput.RiskGroup.EssentialHypertension,
-		},
+		RiskGroup: vo.NewRiskGroup(
+			censusInput.RiskGroup.PregnantWomen,
+			censusInput.RiskGroup.WellnessPerson,
+			censusInput.RiskGroup.AIDS,
+			censusInput.RiskGroup.Diabetes,
+			censusInput.RiskGroup.Obesity,
+			censusInput.RiskGroup.AcuteOrChronicHeartDisease,
+			censusInput.RiskGroup.ChronicLungDiseaseIncludesCOPDAndAsthma,
+			censusInput.RiskGroup.Cancer,
+			censusInput.RiskGroup.ChronicConditionsThatRequireProlongedConsumptionOfSalicylic,
+			censusInput.RiskGroup.RenalInsufficiency,
+			censusInput.RiskGroup.AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS,
+			censusInput.RiskGroup.EssentialHypertension,
+		),
 		SeasonalInfluenzaVaccinationSchedule: seasonalInfluenzaVaccinationSchedule,
 		Rights:                               right,
 	}

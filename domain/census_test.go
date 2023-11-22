@@ -33,7 +33,7 @@ func TestBuildCensus(t *testing.T) {
 					AcuteOrChronicHeartDisease:              true,
 					ChronicLungDiseaseIncludesCOPDAndAsthma: true,
 					Cancer:                                  true,
-					CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+					ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
 					RenalInsufficiency: true,
 					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
 					EssentialHypertension: true,
@@ -65,7 +65,7 @@ func TestBuildCensus(t *testing.T) {
 				Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
 				ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 				TargetGroup:     vo.MustNewTargetGroup(true, false),
-				RiskGroup: domain.RiskGroup{
+				RiskGroup: vo.RiskGroup{
 					PregnantWomen:                           true,
 					WellnessPerson:                          true,
 					AIDS:                                    true,

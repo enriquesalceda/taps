@@ -23,18 +23,18 @@ type TargetGroup struct {
 }
 
 type RiskGroup struct {
-	PregnantWomen                                                                                        bool
-	WellnessPerson                                                                                       bool
-	AIDS                                                                                                 bool
-	Diabetes                                                                                             bool
-	Obesity                                                                                              bool
-	AcuteOrChronicHeartDisease                                                                           bool
-	ChronicLungDiseaseIncludesCOPDAndAsthma                                                              bool
-	Cancer                                                                                               bool
-	CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic bool
-	RenalInsufficiency                                                                                   bool
-	AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS                                           bool
-	EssentialHypertension                                                                                bool
+	PregnantWomen                                               bool
+	WellnessPerson                                              bool
+	AIDS                                                        bool
+	Diabetes                                                    bool
+	Obesity                                                     bool
+	AcuteOrChronicHeartDisease                                  bool
+	ChronicLungDiseaseIncludesCOPDAndAsthma                     bool
+	Cancer                                                      bool
+	ChronicConditionsThatRequireProlongedConsumptionOfSalicylic bool
+	RenalInsufficiency                                          bool
+	AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS  bool
+	EssentialHypertension                                       bool
 }
 
 type SeasonalInfluenzaVaccinationSchedule struct {
