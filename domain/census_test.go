@@ -74,7 +74,7 @@ func TestBuildCensus(t *testing.T) {
 					AcuteOrChronicHeartDisease:              true,
 					ChronicLungDiseaseIncludesCOPDAndAsthma: true,
 					Cancer:                                  true,
-					CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+					ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
 					RenalInsufficiency: true,
 					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
 					EssentialHypertension: true,

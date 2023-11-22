@@ -267,7 +267,7 @@ func Body(t *testing.T, curp string) string {
 			"AcuteOrChronicHeartDisease": false,
 			"ChronicLungDiseaseIncludesCOPDAndAsthma": false,
 			"Cancer": false,
-			"CongenitalHeartOrPulmonaryDiseasesOrOtherChronicConditionsThatRequireProlongedConsumptionOfSalicylic": false,
+			"ChronicConditionsThatRequireProlongedConsumptionOfSalicylic": false,
 			"RenalInsufficiency": false,
 			"AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS": false,
 			"EssentialHypertension": false,
