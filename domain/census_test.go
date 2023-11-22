@@ -79,12 +79,8 @@ func TestBuildCensus(t *testing.T) {
 					AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
 					EssentialHypertension: true,
 				},
-				SeasonalInfluenzaVaccinationSchedule: domain.SeasonalInfluenzaVaccinationSchedule{
-					FirstDose:  true,
-					SecondDose: false,
-					AnnualDose: false,
-				},
-				Rights: vo.Rights.ISSSTE,
+				SeasonalInfluenzaVaccinationSchedule: vo.MustNewSeasonalInfluenzaVaccinationSchedule(true, false, false),
+				Rights:                               vo.Rights.ISSSTE,
 			},
 			census,
 		)
@@ -122,7 +118,7 @@ func TestBuildCensus(t *testing.T) {
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		)
 
-		require.EqualError(t, err, "cannot have an annual dose without a first and second dose")
+		require.EqualError(t, err, "doses should be in order")
 	})
 
 	t.Run("returns an error when address is not valid", func(t *testing.T) {

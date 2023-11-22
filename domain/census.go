@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"errors"
 	"taps/domain/command"
 	"taps/domain/vo"
 	"taps/utils/clk"
@@ -12,11 +11,11 @@ type Census struct {
 	ID                                   string
 	CURP                                 vo.Curp
 	Address                              vo.Address
-	ApplicationDate                      time.Time
 	TargetGroup                          vo.TargetGroup
-	RiskGroup                            RiskGroup
-	SeasonalInfluenzaVaccinationSchedule SeasonalInfluenzaVaccinationSchedule
+	SeasonalInfluenzaVaccinationSchedule vo.SeasonalInfluenzaVaccinationSchedule
 	Rights                               vo.Right
+	RiskGroup                            RiskGroup
+	ApplicationDate                      time.Time
 }
 
 type RiskGroup struct {
@@ -34,21 +33,15 @@ type RiskGroup struct {
 	EssentialHypertension                                                                                bool
 }
 
-type SeasonalInfluenzaVaccinationSchedule struct {
-	FirstDose  bool
-	SecondDose bool
-	AnnualDose bool
-}
-
-func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error) {
+func BuildCensus(censusInput command.CreateCensus, clock clk.Clock) (Census, error) {
 	curp, err := vo.TryParseCURP(censusInput.CURP)
 	if err != nil {
 		return Census{}, err
 	}
 
-	if censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose && (censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose == false ||
-		censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose == false) {
-		return Census{}, errors.New("cannot have an annual dose without a first and second dose")
+	seasonalInfluenzaVaccinationSchedule, err := vo.TryNewSeasonalInfluenzaVaccinationSchedule(censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose, censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose, censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose)
+	if err != nil {
+		return Census{}, err
 	}
 
 	targetGroup, err := vo.TryParseTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
@@ -86,12 +79,8 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clk) (Census, error
 			AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: censusInput.RiskGroup.AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS,
 			EssentialHypertension: censusInput.RiskGroup.EssentialHypertension,
 		},
-		SeasonalInfluenzaVaccinationSchedule: SeasonalInfluenzaVaccinationSchedule{
-			FirstDose:  censusInput.SeasonalInfluenzaVaccinationSchedule.FirstDose,
-			SecondDose: censusInput.SeasonalInfluenzaVaccinationSchedule.SecondDose,
-			AnnualDose: censusInput.SeasonalInfluenzaVaccinationSchedule.AnnualDose,
-		},
-		Rights: right,
+		SeasonalInfluenzaVaccinationSchedule: seasonalInfluenzaVaccinationSchedule,
+		Rights:                               right,
 	}
 
 	return fieldCensus, nil
