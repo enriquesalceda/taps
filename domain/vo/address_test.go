@@ -8,7 +8,7 @@ import (
 
 func TestAddress(t *testing.T) {
 	t.Run("try parse address", func(t *testing.T) {
-		address, err := vo.TryParseAddress(
+		address, err := vo.TryNewAddress(
 			"1",
 			"Calle Benito Juarez",
 			"El Centro",
@@ -26,7 +26,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("try parse address with empty street number", func(t *testing.T) {
-		_, err := vo.TryParseAddress(
+		_, err := vo.TryNewAddress(
 			"",
 			"Calle Benito Juarez",
 			"El Centro",
@@ -36,7 +36,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("try parse address with empty street name", func(t *testing.T) {
-		_, err := vo.TryParseAddress(
+		_, err := vo.TryNewAddress(
 			"1",
 			"",
 			"El Centro",
@@ -46,7 +46,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("try parse address with empty street name", func(t *testing.T) {
-		_, err := vo.TryParseAddress(
+		_, err := vo.TryNewAddress(
 			"1",
 			"Calle Benito Juarez",
 			"",
@@ -56,7 +56,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("try parse address with empty street name", func(t *testing.T) {
-		_, err := vo.TryParseAddress(
+		_, err := vo.TryNewAddress(
 			"",
 			"",
 			"",
@@ -67,7 +67,7 @@ func TestAddress(t *testing.T) {
 
 	t.Run("must parse address", func(t *testing.T) {
 		t.Run("successfully", func(t *testing.T) {
-			address := vo.MustParseAddress(
+			address := vo.MustNewAddress(
 				"1",
 				"Calle Benito Juarez",
 				"El Centro",
@@ -85,7 +85,7 @@ func TestAddress(t *testing.T) {
 
 		t.Run("panics when address is invalid", func(t *testing.T) {
 			require.Panics(t, func() {
-				vo.MustParseAddress(
+				vo.MustNewAddress(
 					"",
 					"",
 					"",

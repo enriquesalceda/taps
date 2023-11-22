@@ -11,7 +11,7 @@ type Address struct {
 	SuburbName   string
 }
 
-func TryParseAddress(streetNumber, streetName, suburbName string) (Address, error) {
+func TryNewAddress(streetNumber, streetName, suburbName string) (Address, error) {
 	errors := []string{}
 
 	if streetNumber == "" {
@@ -37,8 +37,8 @@ func TryParseAddress(streetNumber, streetName, suburbName string) (Address, erro
 	}, nil
 }
 
-func MustParseAddress(streetNumber, streetName, suburbName string) Address {
-	address, err := TryParseAddress(streetNumber, streetName, suburbName)
+func MustNewAddress(streetNumber, streetName, suburbName string) Address {
+	address, err := TryNewAddress(streetNumber, streetName, suburbName)
 	if err != nil {
 		panic(err)
 	}

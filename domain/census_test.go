@@ -64,7 +64,7 @@ func TestBuildCensus(t *testing.T) {
 				},
 				Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
 				ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-				TargetGroup:     vo.MustParseTargetGroup(true, false),
+				TargetGroup:     vo.MustNewTargetGroup(true, false),
 				RiskGroup: domain.RiskGroup{
 					PregnantWomen:                           true,
 					WellnessPerson:                          true,
@@ -164,7 +164,7 @@ func TestBuildCensus(t *testing.T) {
 }
 
 func AddressFixture(t *testing.T, streetNumber, streetName, suburbName string) vo.Address {
-	address, err := vo.TryParseAddress(streetNumber, streetName, suburbName)
+	address, err := vo.TryNewAddress(streetNumber, streetName, suburbName)
 	require.NoError(t, err)
 	return address
 }

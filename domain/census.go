@@ -44,17 +44,17 @@ func BuildCensus(censusInput command.CreateCensus, clock clk.Clock) (Census, err
 		return Census{}, err
 	}
 
-	targetGroup, err := vo.TryParseTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
+	targetGroup, err := vo.TryNewTargetGroup(censusInput.TargetGroup.SixToFiftyNineMonthsOld, censusInput.TargetGroup.SixtyMonthsAndMore)
 	if err != nil {
 		return Census{}, err
 	}
 
-	address, err := vo.TryParseAddress(censusInput.Address.StreetNumber, censusInput.Address.StreetName, censusInput.Address.SuburbName)
+	address, err := vo.TryNewAddress(censusInput.Address.StreetNumber, censusInput.Address.StreetName, censusInput.Address.SuburbName)
 	if err != nil {
 		return Census{}, err
 	}
 
-	right, err := vo.TryParseRights(censusInput.Rights)
+	right, err := vo.TryNewRights(censusInput.Rights)
 	if err != nil {
 		return Census{}, err
 	}

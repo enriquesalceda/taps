@@ -27,15 +27,15 @@ var Rights = rights{
 	NONE:   "NONE",
 }
 
-func MustParseRights(rights string) Right {
-	right, err := TryParseRights(rights)
+func MustNewRights(rights string) Right {
+	right, err := TryNewRights(rights)
 	if err != nil {
 		panic(err)
 	}
 	return right
 }
 
-func TryParseRights(rights string) (Right, error) {
+func TryNewRights(rights string) (Right, error) {
 	rights = strings.ToUpper(rights)
 	switch rights {
 	case "ISSSTE":
