@@ -11,10 +11,10 @@ import (
 
 type Taker struct {
 	store store.CensusStore
-	clock clk.Clk
+	clock clk.Clock
 }
 
-func NewInfluenzaCensusTaker(store store.CensusStore, clock clk.Clk) *Taker {
+func NewInfluenzaCensusTaker(store store.CensusStore, clock clk.Clock) *Taker {
 	return &Taker{store: store, clock: clock}
 }
 

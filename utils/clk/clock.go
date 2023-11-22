@@ -2,16 +2,16 @@ package clk
 
 import "time"
 
-type Clk interface {
+type Clock interface {
 	Now() time.Time
 }
 
-type Clock struct{}
+type Clk struct{}
 
-func NewClock() *Clock {
-	return &Clock{}
+func NewClock() *Clk {
+	return &Clk{}
 }
 
-func (c Clock) Now() time.Time {
+func (c Clk) Now() time.Time {
 	return time.Now()
 }
