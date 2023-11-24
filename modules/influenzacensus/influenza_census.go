@@ -5,16 +5,16 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"taps/domain"
 	"taps/domain/command"
-	"taps/modules/influenzacensus/store"
+	"taps/modules/influenzacensus/repository"
 	"taps/utils/clk"
 )
 
 type Taker struct {
-	store store.CensusStore
+	store repository.CensusStore
 	clock clk.Clock
 }
 
-func NewInfluenzaCensusTaker(store store.CensusStore, clock clk.Clock) *Taker {
+func NewInfluenzaCensusTaker(store repository.CensusStore, clock clk.Clock) *Taker {
 	return &Taker{store: store, clock: clock}
 }
 

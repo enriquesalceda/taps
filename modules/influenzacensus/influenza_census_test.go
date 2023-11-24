@@ -8,7 +8,7 @@ import (
 	"taps/domain"
 	"taps/domain/vo"
 	"taps/modules/influenzacensus"
-	"taps/modules/influenzacensus/store"
+	"taps/modules/influenzacensus/repository"
 	"taps/utils/clk"
 	"testing"
 	"time"
@@ -16,7 +16,7 @@ import (
 
 func TestInfluenzaCensus(t *testing.T) {
 	t.Run("save census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{})
+		influenzaMemoryStore := repository.NewInMemoryInfluenzaStore(map[string]domain.Census{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
 			influenzaMemoryStore,
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
@@ -56,7 +56,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("save multiple census", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{})
+		influenzaMemoryStore := repository.NewInMemoryInfluenzaStore(map[string]domain.Census{})
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
 			influenzaMemoryStore,
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
@@ -124,7 +124,7 @@ func TestInfluenzaCensus(t *testing.T) {
 
 	t.Run("fails if the fields ID FirstLastName LastLastName FirstName DOB State Gender Number are not present", func(t *testing.T) {
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
-			store.NewInMemoryInfluenzaStore(map[string]domain.Census{}),
+			repository.NewInMemoryInfluenzaStore(map[string]domain.Census{}),
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		)
 		type testScenario struct {
@@ -181,7 +181,7 @@ func TestInfluenzaCensus(t *testing.T) {
 	})
 
 	t.Run("raises a 409 conflict when the CURP code already exists", func(t *testing.T) {
-		influenzaMemoryStore := store.NewInMemoryInfluenzaStore(map[string]domain.Census{
+		influenzaMemoryStore := repository.NewInMemoryInfluenzaStore(map[string]domain.Census{
 			"RAHE190116MMCMRSA7": {
 				ID: "RAHE190116MMCMRSA7",
 				CURP: vo.Curp{
@@ -229,9 +229,9 @@ func TestInfluenzaCensus(t *testing.T) {
 			influenzaMemoryStore.All())
 	})
 
-	t.Run("raises a 500 when the store returns an error", func(t *testing.T) {
+	t.Run("raises a 500 when the repository returns an error", func(t *testing.T) {
 		influenzaCensus := influenzacensus.NewInfluenzaCensusTaker(
-			store.NewBrokenInfluenzaStore(),
+			repository.NewBrokenInfluenzaStore(),
 			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		)
 
