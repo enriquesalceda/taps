@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"taps/domain"
@@ -11,27 +11,29 @@ import (
 type DynamoInfluenzaCensusRepository struct {
 	dynamoDB *dynamodb.DynamoDB
 	table    string
+	clock    clk.Clock
 }
 
-type InfluezaCensusItem struct {
-	CurpID    string
-	TimeStamp string
-	Census    domain.Census
+type InfluenzaCensusItem struct {
+	CurpID string
+	Date   string
+	Census domain.Census
 }
 
 func NewDynamoInfluenzaCensusRepository(
 	dynamoDB *dynamodb.DynamoDB,
 	table string,
+	clock clk.Clock,
 ) *DynamoInfluenzaCensusRepository {
-	return &DynamoInfluenzaCensusRepository{dynamoDB: dynamoDB, table: table}
+	return &DynamoInfluenzaCensusRepository{dynamoDB: dynamoDB, table: table, clock: clock}
 }
 
-func (d *DynamoInfluenzaCensusRepository) Save(fieldCensus domain.Census, clock clk.Clock) error {
+func (d *DynamoInfluenzaCensusRepository) Save(fieldCensus domain.Census) error {
 	census, err := dynamodbattribute.MarshalMap(
-		InfluezaCensusItem{
-			CurpID:    fieldCensus.ID,
-			TimeStamp: fmt.Sprint(clock.Now().Unix()),
-			Census:    fieldCensus,
+		InfluenzaCensusItem{
+			CurpID: fieldCensus.ID,
+			Date:   d.clock.Now().Format("2006-01-02"),
+			Census: fieldCensus,
 		},
 	)
 
@@ -44,15 +46,39 @@ func (d *DynamoInfluenzaCensusRepository) Save(fieldCensus domain.Census, clock 
 		Item:      census,
 	})
 
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (d DynamoInfluenzaCensusRepository) All() map[string]domain.Census {
-	//TODO implement me
-	panic("implement me")
-}
+func (d *DynamoInfluenzaCensusRepository) Find(id string, date string) (domain.Census, bool, error) {
+	item, err := d.dynamoDB.GetItem(
+		&dynamodb.GetItemInput{
+			TableName: aws.String(d.table),
+			Key: map[string]*dynamodb.AttributeValue{
+				"CurpID": {S: aws.String(id)},
+				"Date":   {S: aws.String(date)},
+			},
+		},
+	)
 
-func (d DynamoInfluenzaCensusRepository) Find(id string) bool {
-	//TODO implement me
-	panic("implement me")
+	census := domain.Census{}
+
+	if err != nil {
+		return census, false, err
+	}
+
+	if item.Item == nil {
+		return census, false, nil
+	}
+
+	var influenzaCensusItem InfluenzaCensusItem
+	err = dynamodbattribute.UnmarshalMap(item.Item, &influenzaCensusItem)
+	if err != nil {
+		return census, false, err
+	}
+
+	return influenzaCensusItem.Census, true, nil
 }

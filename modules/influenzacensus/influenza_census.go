@@ -2,6 +2,7 @@ package influenzacensus
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"taps/domain"
 	"taps/domain/command"
@@ -30,9 +31,18 @@ func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) even
 		}
 	}
 
-	if t.store.Find(fieldCensus.ID) {
+	census, found, err := t.store.Find(fieldCensus.ID, t.clock.Now().Format("2006-01-02"))
+
+	if err != nil {
 		return events.APIGatewayProxyResponse{
-			Body:       "census already exists",
+			Body:       "internal server error at finding",
+			StatusCode: 500,
+		}
+	}
+
+	if found {
+		return events.APIGatewayProxyResponse{
+			Body:       fmt.Sprintf("census with id %s already exists", census.ID),
 			StatusCode: 409,
 		}
 	}
@@ -40,7 +50,7 @@ func (t *Taker) Handle(fieldCensusParameters events.APIGatewayProxyRequest) even
 	err = t.store.Save(fieldCensus)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			Body:       "internal server error",
+			Body:       "internal server error at saving",
 			StatusCode: 500,
 		}
 	}

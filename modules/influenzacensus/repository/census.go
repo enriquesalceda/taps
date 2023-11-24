@@ -5,7 +5,6 @@ import (
 )
 
 type CensusStore interface {
-	All() map[string]domain.Census
 	Save(fieldCensus domain.Census) error
-	Find(id string) bool
+	Find(id string, date string) (domain.Census, bool, error)
 }
