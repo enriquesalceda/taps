@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -85,14 +84,43 @@ func (d *DynamoInfluenzaCensusRepository) Find(id string, date string) (domain.C
 	return influenzaCensusItem.Census, true, nil
 }
 
-func (d *DynamoInfluenzaCensusRepository) FindByDate(dt string) ([]domain.Census, error) {
+func (d *DynamoInfluenzaCensusRepository) FindByCurpID(curpID string) (domain.Census, bool, error) {
+	census := domain.Census{}
+	var items []InfluenzaCensusItem
+	expr, err := expression.NewBuilder().WithKeyCondition(expression.Key("CurpID").Equal(expression.Value(curpID))).Build()
+	if err != nil {
+		return census, false, err
+	}
+
+	queryParams := &dynamodb.QueryInput{
+		TableName:                 aws.String(d.table),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		KeyConditionExpression:    expr.KeyCondition(),
+	}
+
+	queryOutput, err := d.dynamoDB.Query(queryParams)
+	if err != nil {
+		return census, false, err
+	}
+
+	if len(queryOutput.Items) == 0 {
+		return census, false, nil
+	}
+
+	err = dynamodbattribute.UnmarshalListOfMaps(queryOutput.Items, &items)
+	if err != nil {
+		return census, false, err
+	}
+
+	return items[0].Census, true, nil
+}
+
+func (d *DynamoInfluenzaCensusRepository) FindByDate(date string) ([]domain.Census, error) {
 	var items []InfluenzaCensusItem
 
-	condition := expression.Key("Date").Equal(expression.Value(dt))
-	expr, err := expression.NewBuilder().WithKeyCondition(condition).Build()
+	expr, err := expression.NewBuilder().WithKeyCondition(expression.Key("Date").Equal(expression.Value(date))).Build()
 	if err != nil {
-		fmt.Println("Got error building expression:")
-		fmt.Println(err.Error())
 		return []domain.Census{}, err
 	}
 
