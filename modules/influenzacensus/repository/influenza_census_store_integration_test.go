@@ -221,6 +221,125 @@ func TestInfluenzaCensusStore(t *testing.T) {
 			require.Equal(t, census, domain.Census{})
 		})
 	})
+
+	t.Run("FindByDate", func(t *testing.T) {
+		dynamoDB, table := setupInfluenzaCensusStore()
+		defer dynamoDB.DeleteTable(&dynamodb.DeleteTableInput{TableName: aws.String(table)})
+		influenzaCensusStoreDayOne := NewDynamoInfluenzaCensusRepository(
+			dynamoDB,
+			table,
+			clk.NewFrozenClock(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		)
+
+		err := influenzaCensusStoreDayOne.Save(domain.Census{
+			ID: "RAHE190116MMCMRSA7",
+			CURP: vo.Curp{
+				ID:            "RAHE190116MMCMRSA7",
+				LastLastName:  "RAMIREZ",
+				FirstLastName: "HERRERA",
+				FirstName:     "ESTHER ELIZABETH",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			},
+			Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
+			ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+			TargetGroup:     vo.MustNewTargetGroup(true, false),
+			RiskGroup: vo.RiskGroup{
+				PregnantWomen:                           true,
+				WellnessPerson:                          true,
+				AIDS:                                    true,
+				Diabetes:                                true,
+				Obesity:                                 true,
+				AcuteOrChronicHeartDisease:              true,
+				ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+				Cancer:                                  true,
+				ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+				RenalInsufficiency: true,
+				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+				EssentialHypertension: true,
+			},
+			SeasonalInfluenzaVaccinationSchedule: vo.MustNewSeasonalInfluenzaVaccinationSchedule(true, false, false),
+			Rights:                               vo.Rights.ISSSTE,
+		})
+		err = influenzaCensusStoreDayOne.Save(domain.Census{
+			ID: "RAHE190116MMCMRSADAYONE",
+			CURP: vo.Curp{
+				ID:            "RAHE190116MMCMRSADAYONE",
+				LastLastName:  "RAMIREZDAYONE",
+				FirstLastName: "HERRERADAYAONE",
+				FirstName:     "ESTHER ELIZABETHDAYONE",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			},
+			Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
+			ApplicationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+			TargetGroup:     vo.MustNewTargetGroup(true, false),
+			RiskGroup: vo.RiskGroup{
+				PregnantWomen:                           true,
+				WellnessPerson:                          true,
+				AIDS:                                    true,
+				Diabetes:                                true,
+				Obesity:                                 true,
+				AcuteOrChronicHeartDisease:              true,
+				ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+				Cancer:                                  true,
+				ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+				RenalInsufficiency: true,
+				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+				EssentialHypertension: true,
+			},
+			SeasonalInfluenzaVaccinationSchedule: vo.MustNewSeasonalInfluenzaVaccinationSchedule(true, false, false),
+			Rights:                               vo.Rights.ISSSTE,
+		})
+		require.NoError(t, err)
+
+		influenzaCensusStoreDayTwo := NewDynamoInfluenzaCensusRepository(
+			dynamoDB,
+			table,
+			clk.NewFrozenClock(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)),
+		)
+		err = influenzaCensusStoreDayTwo.Save(domain.Census{
+			ID: "RAHE190116MMCMRSA7DAYTWO",
+			CURP: vo.Curp{
+				ID:            "RAHE190116MMCMRSA7DAYTWO",
+				LastLastName:  "RAMIREZDAYTWO",
+				FirstLastName: "HERRERADAYTWO",
+				FirstName:     "ESTHER ELIZABETHDAYTWO",
+				Gender:        "MUJER",
+				DOB:           "16/01/2019",
+				State:         "MEXICO",
+				Number:        15,
+			},
+			Address:         AddressFixture(t, "18b", "chapulin", "arcoiris"),
+			ApplicationDate: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC),
+			TargetGroup:     vo.MustNewTargetGroup(true, false),
+			RiskGroup: vo.RiskGroup{
+				PregnantWomen:                           true,
+				WellnessPerson:                          true,
+				AIDS:                                    true,
+				Diabetes:                                true,
+				Obesity:                                 true,
+				AcuteOrChronicHeartDisease:              true,
+				ChronicLungDiseaseIncludesCOPDAndAsthma: true,
+				Cancer:                                  true,
+				ChronicConditionsThatRequireProlongedConsumptionOfSalicylic: true,
+				RenalInsufficiency: true,
+				AcquiredImmunosuppressionDueToDiseaseOrTreatmentExceptAIDS: true,
+				EssentialHypertension: true,
+			},
+			SeasonalInfluenzaVaccinationSchedule: vo.MustNewSeasonalInfluenzaVaccinationSchedule(true, false, false),
+			Rights:                               vo.Rights.ISSSTE,
+		})
+		require.NoError(t, err)
+
+		census, err := influenzaCensusStoreDayOne.FindByDate("2023-01-02")
+		require.NoError(t, err)
+		require.Equal(t, len(census), 1)
+	})
 }
 
 func setupInfluenzaCensusStore() (*dynamodb.DynamoDB, string) {
@@ -258,6 +377,24 @@ func setupInfluenzaCensusStore() (*dynamodb.DynamoDB, string) {
 			{
 				AttributeName: aws.String("Date"),
 				AttributeType: aws.String("S"),
+			},
+		},
+		GlobalSecondaryIndexes: []*dynamodb.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String("DateIndex"),
+				KeySchema: []*dynamodb.KeySchemaElement{
+					{
+						AttributeName: aws.String("Date"),
+						KeyType:       aws.String("HASH"),
+					},
+				},
+				Projection: &dynamodb.Projection{
+					ProjectionType: aws.String("ALL"),
+				},
+				ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+					ReadCapacityUnits:  aws.Int64(1),
+					WriteCapacityUnits: aws.Int64(1),
+				},
 			},
 		},
 		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
